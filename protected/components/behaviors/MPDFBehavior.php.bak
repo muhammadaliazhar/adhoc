@@ -1,0 +1,121 @@
+<?php
+/***********************************************************************************
+* Copyright (C) 2011-2019 X2 Engine Inc. All Rights Reserved.
+*
+* X2 Engine Inc.
+* P.O. Box 610121
+* Redwood City, California 94061 USA
+* Company website: http://www.x2engine.com
+*
+* X2 Engine Inc. grants you a perpetual, non-exclusive, non-transferable license
+* to install and use this Software for your internal business purposes only
+* for the number of users purchased by you. Your use of this Software for
+* additional users is not covered by this license and requires a separate
+* license purchase for such users. You shall not distribute, license, or
+* sublicense the Software. Title, ownership, and all intellectual property
+* rights in the Software belong exclusively to X2 Engine. You agree not to file
+* any patent applications covering, relating to, or depicting this Software
+* or modifications thereto, and you agree to assign any patentable inventions
+* resulting from your use of this Software to X2 Engine.
+*
+* THIS SOFTWARE IS PROVIDED "AS IS" AND WITHOUT WARRANTIES OF ANY KIND, EITHER
+* EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE IMPLIED WARRANTIES OF
+* MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT.
+***********************************************************************************/
+
+
+
+
+
+
+require_once Yii::app()->basePath.'/integration/MPDF/autoload.php';
+require_once Yii::app()->basePath.'/integration/FPDI_PDF_Parser/src/autoload.php';
+
+class MPDFBehavior extends CBehavior {
+
+    public function newPdf() {
+        $pdf = new Pdf;
+        $pdf->SetFont('helvetica', '', 12);
+        return $pdf;
+    }
+
+    public static function createInstance() {
+        $behavior = Yii::app()->controller->attachBehavior('MPDFBehavior', new MPDFBehavior);
+        return $behavior;
+    }
+
+}
+
+class Pdf extends \Mpdf\Mpdf {
+
+    // variables relating to current imported file
+    private $pageCount;
+    private $pageNum;
+
+    /**
+     * Set pagecount on pdf load
+     */
+    public function setSourceFile($file) {
+        $this->pageNum = 0;
+        return $this->pageCount = parent::setSourceFile($file);
+    }
+
+    /**
+     * Imports the next page and increments $pageNum
+     * @return pageNum (or null if no next page)
+     */
+    public function nextPage() {
+        if ($this->pageNum == $this->pageCount) return null;
+        $this->AddPageByArray(['sheet-size'=>'Letter']);
+        $tpl = $this->importPage(++$this->pageNum);
+        $this->useTemplate($tpl);
+        return $this->pageNum;
+    }
+
+    /**
+     * Overrides WriteText()
+     * Parameters in pixels instead of millimeters.
+     */
+    public function WriteText($x, $y, $txt, $family='', $style='', $size=0, $alpha=1) {
+        $oldFamily = $this->currentfontfamily;
+        $oldStyle = $this->currentfontstyle;
+        $oldSize = $this->currentfontsize;
+        $this->SetFont(
+            $family = $family ?: $oldFamily, 
+            $style = $style ?: $oldStyle,
+            $size = $size ?: $oldSize);
+        $this->SetAlpha($alpha);
+        $offY = $this->px2mm($size * 1.33); //1.33 px per pt
+        parent::WriteText($this->px2mm($x), $this->px2mm($y) + $offY, $txt);
+        $this->SetFont($oldFamily, $oldStyle, $oldSize);
+        $this->SetAlpha(1);
+    }
+
+    /**
+     * Based on Image() but with QOL improvements.
+     * Parameters in pixels instead of millimeters. 
+     */
+    public function ImageByArray($filename, $x, $y, $w=0, $h=0, $options=[]) {
+        $defaults = [
+            'ext' => '',
+            'href_link' => '',
+            'paint' => true,
+            'constrain' => true,
+            'is_watermark' => false,
+            'shownoimg' => true,
+            'allowvector' => true,
+        ];
+        $options = array_merge($defaults, $options);
+        parent::Image($filename, $this->px2mm($x), $this->px2mm($y), $this->px2mm($w), $this->px2mm($h), $options['ext'], $options['href_link'], $options['paint'], $options['constrain'], $options['is_watermark'], $options['shownoimg'], $options['allowvector']);
+    }
+
+    /**
+     * Convert pixel distances to millimeters, which are expected by certain Mpdf functions.
+     */
+    private function px2mm ($n) {
+        $n = (float) preg_replace("/[^0-9.]/", "", $n);
+        $px2mm = 25.4/$this->img_dpi; //25.4mm/in
+        return $n*$px2mm;
+    }
+
+}

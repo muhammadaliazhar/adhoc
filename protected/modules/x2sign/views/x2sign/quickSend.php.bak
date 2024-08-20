@@ -1,0 +1,220 @@
+<?php
+/***********************************************************************************
+* Copyright (C) 2011-2019 X2 Engine Inc. All Rights Reserved.
+*
+* X2 Engine Inc.
+* P.O. Box 610121
+* Redwood City, California 94061 USA
+* Company website: http://www.x2engine.com
+*
+* X2 Engine Inc. grants you a perpetual, non-exclusive, non-transferable license
+* to install and use this Software for your internal business purposes only
+* for the number of users purchased by you. Your use of this Software for
+* additional users is not covered by this license and requires a separate
+* license purchase for such users. You shall not distribute, license, or
+* sublicense the Software. Title, ownership, and all intellectual property
+* rights in the Software belong exclusively to X2 Engine. You agree not to file
+* any patent applications covering, relating to, or depicting this Software
+* or modifications thereto, and you agree to assign any patentable inventions
+* resulting from your use of this Software to X2 Engine.
+*
+* THIS SOFTWARE IS PROVIDED "AS IS" AND WITHOUT WARRANTIES OF ANY KIND, EITHER
+* EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE IMPLIED WARRANTIES OF
+* MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT.
+***********************************************************************************/
+
+/**
+ * @author Peter Czupil <peter@x2engine.com>
+ */
+
+// Import Bootstrap
+Yii::app()->clientScript->registerCssFile('https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css');
+Yii::app()->clientScript->registerScriptFile('https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js');
+Yii::app()->clientScript->registerScriptFile('https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js');
+
+$cs = Yii::app()->clientScript;
+$cs->registerCssFile(Yii::app()->theme->baseUrl.'/css/ui-elements.css');
+$cs->registerCssFile(Yii::app()->theme->baseUrl.'/css/fontAwesome/css/font-awesome.css');
+$cs->registerCssFile(Yii::app()->theme->baseUrl.'/css/fontAwesome/css/all.min.css');
+$cs->registerCssFile(Yii::app()->theme->baseUrl.'/css/fontAwesome/css/v4-shims.min.css');
+$cs->registerCssFile(Yii::app()->theme->baseUrl.'/css/form.css?' . Yii::app()->params->buildDate, 'screen, projection');
+
+Yii::app()->clientScript->registerScript('hideSidebarJS', "
+    $('#fullscreen-button').hide();
+    $('#sidebar-right').hide();
+");
+
+
+Yii::app()->clientScript->registerCssFile(Yii::app()->controller->module->assetsUrl.'/css/quicksend.css');
+Yii::app()->clientScript->registerScriptFile(Yii::app()->controller->module->assetsUrl.'/js/signable.js');
+
+?>
+
+<div class="container" style="max-width: 100%;">
+    <div style="padding-top: 1.8rem;">
+        <h3>Add Documents</h3>
+    </div>
+    <div class="signDocUpload">
+    <?php
+        $this->widget('FileUploader', array('id' => 'doc-upload',
+            'displayToggle' => false,
+            'displayForm' => false,
+            'mediaParams' => array('associationType' => 'x2signenvelopes', 'associationId' => $envelope->id),
+            'acceptedFiles' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf , image/jpeg',
+            'viewParams' => array('showButton' => false, 'closeButton' => false),
+        )); 
+    ?>
+    <br>
+            <div style="text-align: center;>
+            <label style="text-align: center;">OR</label>
+            </div>
+            <br>
+
+        <div class="oldTemps">
+            <label for="fileName">Template Name</label>
+            <input type="text" id="fileName" name="fileName">
+            <span class="x2-button blue" id="lookUpTemps">
+                <i class="fa fa-search"></i>
+            </span>
+            <?php 
+                $hint = "Templates can be saved for later use. You can search for X2SignDoc templates using this search bar. Click on the magnifying glass to execute the search.";
+                echo X2Html::hint($hint, false);
+            ?>
+            <br>
+            <label>Lookup Results</label>
+            <select name="listOfTemps" id="listOfTemps">
+                <option value="none">Pre-existing Templates</option>
+                <?php 
+                    foreach ($templates as $template) {
+                        echo '<option value="' . $template['modelId'] . '">' . $template['viewName'] . '</option>';
+                    }
+                ?>
+            </select>
+            <span class="x2-button" id="addTemp">
+                ADD
+            </span>
+            <?php
+                $hint = "After executing a search, your results will show up in this dropdown. Select an entry and click \"ADD\" to use the template.";
+                echo X2Html::hint($hint, false);
+            ?>
+            <ol id="docsToAdd">
+            </ol>
+
+        </div>
+        <div style="float: right; padding:5px;">
+            <button id='cancel-button' class='btn btn-light flex-item' style='border: 1px solid #8e9296;'>Cancel</button>
+            <button id='next-button' class='btn btn-warning flex-item'>Next</button>
+        </div> 
+        </div>
+    </div>
+</div>
+<script>
+
+    $('#lookUpTemps').on('click', function() {
+        $.ajax({
+            url: yii.baseUrl+'/index.php/x2sign/getOldTemps',
+            type: 'GET',
+            data: {
+                type: 'documents',
+                model: 'Contacts',
+                query: $('#fileName').val()
+            },
+            success: function (obj) {
+                $('#listOfTemps').children().remove();
+                var modelList = $.parseJSON(obj)[0];
+                for (var i = 0; i < modelList.length; i++) {
+                    $("#listOfTemps").append(
+                        $('<option></option>').val(modelList[i].modelId).html(modelList[i].viewName)
+                    );
+    
+                }
+            },
+            error: function (data) {
+                alert(data.responseText);
+            },
+            complete: function () {
+                //loading.remove();
+            }
+        });
+  
+    });
+
+    $('#addTemp').on('click', function() {
+        var e = document.getElementById("listOfTemps");
+        var id = e.value;
+        var name = e.options[e.selectedIndex].text;
+        if(name != 'Pre-existing Templates'){
+            $("#docsToAdd").append(
+                "<li mediaId = '" + id + "'>" + name + "</li>"
+            );
+        }else{
+            alert("You have pick the default option, not vaild");
+        }
+    });
+
+    $('#next-button').on('click', function() {
+        var oldTemps = [];
+        $('#docsToAdd > li').each(function(i){
+            var id = $( this ).attr("mediaId");
+            oldTemps.push(id);
+        });
+        
+        $.ajax({
+            url: '<?php echo Yii::app()->controller->createUrl('/x2sign/addOldTemps', array('id' => $envelope->id)); ?>',
+            type: 'GET',
+            data: {
+                ids: oldTemps,
+            },
+            success: function (obj) {
+                 if(obj == 'NO DOCS') alert('Please attach a template or upload a doc to continue.');
+                 else window.location.href = <?php echo "'" . Yii::app()->controller->createUrl('/x2sign/quickSetupRecipients', array('id' => $envelope->id)) . "'"; ?>;
+            },
+            error: function (data) {
+                alert(data.responseText);
+            },
+            complete: function () {
+                //loading.remove();
+            }
+        });
+ 
+
+    });
+
+    // Inspiration taken from: https://stackoverflow.com/questions/3519861/yes-or-no-confirm-box-using-jquery
+    function confirmDialog(message) {
+      $('<div></div>').appendTo('body')
+        .html('<div><h6>' + message + '</h6></div>')
+        .dialog({
+            modal: true,
+            title: 'Delete message',
+            zIndex: 10000,
+            autoOpen: true,
+            width: 'auto',
+            resizable: false,
+            buttons: {
+                Yes: function() {
+                    $('body').append('<h1>Confirm Dialog Result: <i>Yes</i></h1>');
+                    $(this).dialog('close');
+                    window.location.href = '<?php echo Yii::app()->controller->createUrl('/x2sign/cancelQuickSetupEnvelope', array('id' => $envelope->id)); ?>';
+                },
+                No: function() {
+                    $('body').append('<h1>Confirm Dialog Result: <i>No</i></h1>');
+                    $(this).dialog('close');
+                }
+            },
+            close: function(event, ui) {
+                $(this).remove();
+            }
+        });
+    }; 
+
+
+    $('#cancel-button').on('click', function() {
+        confirmDialog('Are you sure you want to cancel this envelope?');
+    });
+
+
+</script>
+
+
+

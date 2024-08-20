@@ -1,0 +1,140 @@
+/***********************************************************************************
+* Copyright (C) 2011-2019 X2 Engine Inc. All Rights Reserved.
+*
+* X2 Engine Inc.
+* P.O. Box 610121
+* Redwood City, California 94061 USA
+* Company website: http://www.x2engine.com
+*
+* X2 Engine Inc. grants you a perpetual, non-exclusive, non-transferable license
+* to install and use this Software for your internal business purposes only
+* for the number of users purchased by you. Your use of this Software for
+* additional users is not covered by this license and requires a separate
+* license purchase for such users. You shall not distribute, license, or
+* sublicense the Software. Title, ownership, and all intellectual property
+* rights in the Software belong exclusively to X2 Engine. You agree not to file
+* any patent applications covering, relating to, or depicting this Software
+* or modifications thereto, and you agree to assign any patentable inventions
+* resulting from your use of this Software to X2 Engine.
+*
+* THIS SOFTWARE IS PROVIDED "AS IS" AND WITHOUT WARRANTIES OF ANY KIND, EITHER
+* EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE IMPLIED WARRANTIES OF
+* MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT.
+***********************************************************************************/
+
+body *{
+    font-family: Montserrat;
+}
+
+.signDocUpload {
+    justify-content: center;
+    background: white;
+    border: .05rem solid #e7e9ed;
+    height: 80%;
+}
+
+#doc-upload {
+    height: 100%;
+}
+
+.dropzone.dz-clickable {
+    height: 100%;
+}
+
+.recipient {
+    border: .1rem solid #e7e9ed;
+    background: white;
+}
+
+.closeBtn:hover {
+    cursor: pointer;
+}
+
+.nameInput {
+    margin-bottom: .5rem;
+}
+
+.emailInput {
+    padding-top: .5rem;
+}
+
+#doc-upload.file-uploader {
+    margin: 0;
+    padding: 0;
+}
+
+#doc-upload.file-uploader .dropzone {
+    margin: 0;
+}
+
+.section-container.container {
+    border-bottom: 1px solid rgb(169, 169, 169) !important;
+    min-height: unset;
+    padding: 25px 0;
+}
+
+.section-body {
+    border: none !important;
+    margin-top: 25px;
+}
+
+.signDocUpload .oldTemps {
+    margin-top: 25px;
+}
+
+.signDocUpload .template-name {
+    margin-bottom: 8px;
+}
+
+.signDocUpload #docsToAdd,
+.review-send-container #emailForm .form-group:last-child {
+    margin-bottom: 0;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.section-header .accordianBtn {
+    color: black;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.prev-next-bar {
+    display: flex;
+    border-top: 1px solid rgb(204, 204, 204);
+    border-bottom: 1px solid rgb(204, 204, 204);
+    background-color: rgb(255, 255, 255);
+    justify-content: flex-end;
+    padding: 8px;
+    margin-top: 50px;
+}
+
+.prev-next-bar button:first-child {
+    margin-right: 8px;
+}
+
+.ui-dialog.advanced-options-dialog .ui-dialog-buttonpane,
+.ui-dialog.host-information-dialog .ui-dialog-buttonpane {
+    margin-top: 0;
+}
+
+.ui-dialog.advanced-options-dialog .ui-dialog-buttonpane button {
+    margin: 0;
+}
+
+.ui-dialog.advanced-options-dialog .ui-dialog-buttonpane button:first-child {
+    margin-right: 8px;
+}
+
+.advanced-options-form label {
+    font-size: 14px;
+    margin-bottom: 2px;
+}
+
+.host-information-dialog .ui-dialog-titlebar-close {
+    display: none;
+

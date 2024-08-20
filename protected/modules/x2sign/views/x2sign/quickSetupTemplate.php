@@ -1,0 +1,998 @@
+<?php
+/***********************************************************************************
+* Copyright (C) 2011-2019 X2 Engine Inc. All Rights Reserved.
+*
+* X2 Engine Inc.
+* P.O. Box 610121
+* Redwood City, California 94061 USA
+* Company website: http://www.x2engine.com
+*
+* X2 Engine Inc. grants you a perpetual, non-exclusive, non-transferable license
+* to install and use this Software for your internal business purposes only
+* for the number of users purchased by you. Your use of this Software for
+* additional users is not covered by this license and requires a separate
+* license purchase for such users. You shall not distribute, license, or
+* sublicense the Software. Title, ownership, and all intellectual property
+* rights in the Software belong exclusively to X2 Engine. You agree not to file
+* any patent applications covering, relating to, or depicting this Software
+* or modifications thereto, and you agree to assign any patentable inventions
+* resulting from your use of this Software to X2 Engine.
+*
+* THIS SOFTWARE IS PROVIDED "AS IS" AND WITHOUT WARRANTIES OF ANY KIND, EITHER
+* EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE IMPLIED WARRANTIES OF
+* MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT.
+***********************************************************************************/
+
+/**
+ * @author Clifton Chiang <clifton@x2engine.com>
+ */
+
+// Import Bootstrap
+Yii::app()->clientScript->registerCssFile('https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css');
+Yii::app()->clientScript->registerScriptFile('https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js');
+Yii::app()->clientScript->registerScriptFile('https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js');
+
+$cs = Yii::app()->clientScript;
+$cs->registerCssFile(Yii::app()->theme->baseUrl.'/css/ui-elements.css');
+$cs->registerCssFile(Yii::app()->theme->baseUrl.'/css/fontAwesome/css/font-awesome.css');
+$cs->registerCssFile(Yii::app()->theme->baseUrl.'/css/fontAwesome/css/all.min.css');
+$cs->registerCssFile(Yii::app()->theme->baseUrl.'/css/fontAwesome/css/v4-shims.min.css');
+$cs->registerCssFile(Yii::app()->theme->baseUrl.'/css/form.css?' . Yii::app()->params->buildDate, 'screen, projection');
+
+Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl() . '/js/pdfReader/build/pdf.js');
+
+$title = Yii::t('docs', 'Edit: ');
+$authParams = array('X2Model' => $model);
+
+
+
+$form = $this->beginWidget('CActiveForm', array(
+    'id' => 'x2sign-form',
+    'enableAjaxValidation' => false,
+));
+
+$fields = "[]";
+if(!empty($signDoc->fieldInfo))
+    $fields = $signDoc->fieldInfo;
+
+Yii::app()->clientScript->registerScriptFile($this->module->assetsUrl.'/js/signable.js?345678', CClientScript::POS_END);
+Yii::app()->clientScript->registerScript('updateSignable', "updateSignable($model->id, $signDoc->id, $signDoc->mediaId, '" . addslashes($pdfName) ."', $fields, $envelope->id, $signDocNum);", CClientScript::POS_END);
+Yii::app()->clientScript->registerScript('hideSidebarJS', "
+    $('#fullscreen-button').hide();
+    $('#sidebar-right').hide();
+");
+
+Yii::app()->clientScript->registerCss('updateX2Sign', '
+   .column {
+        float: left;
+        margin: unset;
+    }
+
+    #document {
+        background-color: #e4e4e4;
+        border: 1px solid black;
+        width: 818px; 
+        position: relative;
+    }
+
+    hr {
+        background-color: #555555;
+        margin: 1px;
+    }
+
+    .x2-sign-doc {
+        width: 816px;
+        height: 1056px; 
+        display: inline-block; 
+        margin: auto;
+        z-index: 1;
+        position: relative;
+        //left: 50%;
+        //transform: translate(-50%);
+    }
+    
+    .canvas-wrapper {
+        width: 816px;
+        height: 1056px; 
+        display: inline-block; 
+        margin: auto;
+        margin-bottom: 20px;
+        z-index: 1;
+        position: sticky;
+    }
+
+    #pdf-dropzone {
+        z-index: 2;
+        left: 15px;
+        border: 1px solid black;
+        border-radius: 5px;
+    }
+
+    #x2-sign-template {
+        //min-height: 1070px;
+    }
+
+    .delete-field {
+        float: right;
+        position: relative;
+        left: 19px;
+        top: -4px;
+    }
+
+    div[id^="Signature"] > .delete-field {
+        left: 23px;
+        top: -9px;
+    }
+
+    div[id^="Date"] > .delete-field {
+        left: 23px;
+        top: -9px;
+    }
+    
+    div[id^="Signature"] > p, div[id^="Initials"] > p {
+        display: block;
+        margin: 0;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-right: -50%;
+        transform: translate(-50%, -50%);
+    }
+
+    div[id^="Date"] > i {
+        display: block;
+        margin: 0;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-right: -50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .delete-field:hover {
+        transform: scale(1.2);
+    }
+
+    .draggable > a.delete-field > i {
+        color: red;
+    }
+
+    .draggable {
+        z-index: 3;
+        top: 6px;
+    }
+
+    input.x2-sign-input:not([id=initials]) {
+        //min-width: 95px !important;
+        //width: 95px;
+        position: relative;
+        top: 5px;
+        left: 5px;
+        text-align: left;
+        font-family: monospace;
+        font-size: 12px;
+        letter-spacing: 0.14px;
+        margin: unset !important;
+    }
+
+     input#text {
+         position: relative;
+         min-width: 27px !important;
+         width: 27px;
+         top: 5px;
+         left: 5px;
+         margin: unset;
+     }
+
+    textarea#text {
+        position: relative;
+        min-width: 50px !important;
+        width: 50px;
+        min-height: 15px;
+        height: 15px;
+        top: 5px;
+        left: 5px;
+        font-family: monospace !important;
+        font-size: 12px;
+        letter-spacing: 0.14px;
+        margin: unset;
+        overflow: hidden;
+        resize: none;
+        line-height: normal;
+        box-sizing: content-box;
+    }
+
+    input#checkbox {
+        position: absolute;
+        top: 9px;
+        left: 9;
+        margin: unset;
+    }
+
+    input#radio {
+        position: absolute;
+        top: 9px;
+        width: 10px;
+        margin: unset;
+    }
+
+    select#YesNo {
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        margin: unset;
+        z-index: 3;
+    }
+    select#Dropdown {
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        margin: unset;
+        z-index: 3;
+        width:150px;
+    }
+
+    input#initials {
+        min-width: 50px !important;
+        width: 50px;
+        position: relative;
+        top: 5px;
+        left: 5px;
+        text-align: left;
+        font-family: monospace;
+        font-size: 12px;
+        letter-spacing: 0.14px;
+        margin: unset;
+    }
+
+    #main-column {
+        width: 90%;
+        margin: auto;
+    }
+
+    #recipient-selection-field {
+        display: block;
+        text-align: center;
+        margin-top: 9px;
+        margin-bottom: 3px;
+    }
+
+    .checkbox {
+        display: block;
+        text-align: center;
+        margin-top: 9px;
+        margin-bottom: 3px;
+    }
+
+    
+    .radio {
+        display: block;
+        text-align: center;
+        margin-top: 9px;
+        margin-bottom: 3px;
+    }
+    
+    .select {
+        display: block;
+        text-align: center;
+        margin-top: 9px;
+        margin-bottom: 3px;
+    }
+
+    .color-preview {
+        height: 15px;
+        width: 15px;
+        background-color: rgba(3, 207, 252, 0.5);
+        border-radius: 50%;
+        display: inline-block;
+        border: 0.5px solid black;
+        position: relative;
+        top: 3px;
+    }
+
+    div[class*="resizable"] > .ui-resizable-handle {
+        height: 9px;
+        width: 9px;
+        background-color: #bbbbbb;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    div[class*="resizable"] > .ui-resizable-se {
+        background-image: url("");
+        right: -5px;
+        bottom: -5px;
+    }
+
+    div[class*="resizable"] > .ui-resizable-se, .ui-resizable-nw {
+        cursor: nwse-resize;
+    }
+
+    div[class*="resizable"] > .ui-resizable-ne, .ui-resizable-sw {
+        cursor: nesw-resize;
+    }
+
+    #add-field-button {
+        color: #01b701;
+        cursor: pointer;
+    } 
+
+    #add-fields-scroll {
+        overflow-y: auto;
+        max-height: 700px;
+    }
+
+    #add-fields {
+        width: 20%;
+        min-width: 125px;
+    }
+
+    #thumbnail-container {
+        display: inline-flex;
+        align-items: center;
+        flex-direction: column;
+        background-color: #E9E9E9;
+        width: auto;
+        padding: 10px 50px;
+        height: calc(100vh - 56px);
+        overflow: auto;
+        box-sizing: border-box;
+        border: 1px solid;
+    }
+  
+    .thumbnail-canvas {
+        display: inline-flex;
+        align-items: center;
+        flex-direction: column;
+        margin-top: 20px;
+        border: 1px solid rgb(204, 204, 204);
+        position:relative;
+    }
+
+    .thumbnail-canvas:last-child {
+        margin-bottom: 16px;
+    }
+
+    .thumbnail-canvas canvas {
+        width: 125px;
+        height: 160px;
+        cursor: pointer;
+    }
+
+    .thumbnail-canvas.active {
+        border: 1px solid #2463D1;
+    }
+    .thumbnail-canvas .thumbnail-footer {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: rgb(233, 233, 233);
+        padding: 4px;
+        color: #777672;
+        font-size: 14px;
+    }
+
+    .thumbnail-canvas .thumbnail-footer .delete-btn {
+        cursor: pointer;
+    }
+
+    div.form {
+        overflow: unset;
+        margin-bottom: 0;
+    }
+
+    div.form .document-form .cell {
+        float: unset;
+    }
+
+    label {
+        margin-top: 8px;
+        margin-bottom: 0;
+    }
+    .pdf-toggle button {
+        background: transparent;
+        border: 1px solid;
+        margin: 10px;
+        padding: 4px 5px;
+        float: right;
+    } 
+    #x2sign-form .pdf-toggle button:focus-visible {
+        outline: none;
+        box-shadow: none;
+      }
+    h2.document-name {
+        display: inline-block;
+        margin: 0px;
+        padding: 15px 0;
+        font-size: 12px;
+        font-weight: bold;
+        width: 19ch;
+        text-align: center;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }  
+    .css-clip {
+        top: 0px;
+        position: absolute;
+        padding-top: 8px;
+        left: -6px;
+        height: 100%;
+        width: 20px;
+    }   
+    .css-clip-edit {
+        border-radius: 2px 0px 0px 2px;
+        border-style: solid;
+        border-width: 1px 0px 1px 1px;
+        display: block;
+        height: 10px;
+        margin-bottom: 4px;
+        padding-left: 6px;
+        position: relative;
+        text-align: left;
+        width: 15px;
+        background-color: rgb(255, 214, 91);
+        border-color: rgb(184, 134, 11);
+    }
+    .css-clip-edit::before {
+        border-bottom: 4px solid transparent;
+        border-right-width: 0px;
+        border-top: 4px solid transparent;
+        content: "";
+        display: block;
+        height: 8px;
+        position: absolute;
+        right: -4px;
+        width: 4px;
+        z-index: 2;
+    }
+    .css-clip-edit::before {
+        border-left: 4px solid rgb(255, 214, 91);
+    }
+    .css-clip-edit::after {
+        border-bottom: 5px solid transparent;
+        border-right-width: 0px;
+        border-top: 5px solid transparent;
+        color: rgb(255, 255, 255);
+        content: "";
+        display: block;
+        height: 10px;
+        position: absolute;
+        right: -5px;
+        top: -1px;
+        width: 5px;
+        z-index: 1;
+    }
+    .css-clip-edit::after {
+        border-left: 5px solid rgb(184, 134, 11);
+    }
+
+    form.data-label-form {
+        margin-top: 6px;
+    }
+
+    form.data-label-form input {
+        padding: 4px;
+        width: 100%;
+        max-width: 150px;
+        margin: 0 0 6px 0 !important;
+    }
+
+    .data-label-form .btn-group {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    .data-label-form .btn-group button {
+        border: 1px solid #cecece;
+        outline: none;
+        background: none;
+        color: #494949;
+        padding: 3px 6px;
+        font-size: 12px;
+        border-radius: 3px;
+    }
+
+    .data-label-form .btn-group button:first-child {
+        margin-right: 6px;
+    }
+    .data-label-dropdown {
+        margin-top: 6px !important;
+        padding: 4px;
+        width: 100%;
+        max-width: 150px;
+    }
+
+    /* ALert bar Styling Start */
+
+    .alert {
+        display: none;
+        margin-bottom: 10px;
+        border: 1px solid #a4a4a4;
+        border-radius: 4px;
+        position: fixed;
+        top: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999;
+        padding: 15px 25px 15px 15px;
+        font-size: 14px;
+    }
+
+    .alert .close {
+        position: absolute;
+        right: 0px;
+        top: 0px;
+        background: transparent;
+        border: none;
+        font-size: 16px;
+    }
+
+    .alert-success {
+        color: #000000de;
+        background-color: #dff0d8;
+        border: 1px solid green;
+    }
+
+    .alert-error {
+        color: #000000de;
+        background-color: #f2dede;
+        border-color: #ebccd1;
+        border: 1px solid red;
+    }
+
+    /* ALert bar Styling End */
+
+    #data-label.active {
+        background-color: #ffc200;
+        border: 1px solid #353535;
+        color: #353535;
+    }
+
+    #pdf-right-sidebar-toggle, #pdf-left-sidebar-toggle {
+        display:none;
+        font-size: 20px; 
+        cursor: pointer;
+    }
+
+
+
+    @media only screen and (max-width: 1581px) {
+        .field-row {
+            display: flex;
+            flex-direction: row;
+            margin-bottom: 10px;
+        }
+    }
+
+    @media only screen and (max-width: 1342px) {
+        .thumbnail-sidebar-toggle-right-on {
+            right: 21% !important;
+        }
+    
+        .toggle-right-on {
+            margin-top: 58px !important;
+            position: fixed;
+            right: 6%;
+            z-index: 1;
+            display: block !important;
+        }
+
+        #pdf-right-sidebar {
+            display: none;
+        }
+
+        #pdf-right-sidebar-toggle {
+            display: block;
+            margin: 60px 15px;
+        }
+
+    }
+
+    @media screen and (max-width: 1200px) {
+        #document .canvas-wrapper {
+            max-width: 100%; 
+            height: auto; 
+        }
+        
+        #document .canvas-wrapper canvas {
+            width: 100%;
+            height: auto; 
+        }
+
+        #document {
+            width: auto;
+            min-width: 0%;
+        }
+
+        #add-fields {
+            margin: 0% 1%;
+        }
+    }
+    @media (max-width: 576px) {
+        .col-xs {
+            flex-basis: 0;
+            flex-grow: 1;
+            max-width: 100%;
+        }
+    }
+
+');
+//this div is just to store the viewers so I can say no
+echo "<div id='viewerspotsIds' style='displaye:none;' data-value='" . $viewerSpots . "'></div>";
+?>
+<div class="cell right pb-4" style="float: right; margin-top: 10px; margin-right: 10px;">
+    <button class='back-button-container btn btn-light flex-item' style='border: 1px solid #8e9296;'>Back</button>
+    <button class='create-button-container btn btn-warning flex-item'><?php echo ($envelope->hostedEnvelope) ? "Save" : "Send Document" ?></button>
+</div>
+
+<div class="row form no-border">
+    <div class="row col-10 col-sm col-xs">
+        <div class="col-2 field-row">
+            <div class="cell">
+                <?php
+                    echo $form->errorSummary($signDoc);
+                    echo $form->label($signDoc,'name');
+                    echo $form->textField(
+                        $signDoc,'name',
+                        array('maxlength'=>100,'id'=>'doc-name'));
+                    echo $form->error($signDoc,'name');
+                ?>
+            </div>
+            <div class="cell">
+                <?php
+                    echo $form->label($model, 'document');
+                    echo "<div id='media-autocomplete-container'>";
+                    echo X2Model::renderModelAutocomplete (
+                        'Media', false, array (
+                            'name' => 'Media[name]'
+                        )
+                    );
+                    echo CHtml::hiddenField ('MediaModelId');
+                    echo "</div>";
+                ?>
+            </div>
+            <div class="cell">
+                <?php
+                    echo $form->label($signDoc, 'template');
+                    echo CHtml::checkbox('template', $signDoc->template, array('class' => ''));
+                    echo X2Html::hint("Check this if you\d like to store this document as a template to be used in later e-signature requests.", false);
+                ?>
+            </div>
+
+        </div>
+
+        <div id="full-width-pdf" class="col-10 col-sm col-xs" style="display: flex; flex-direction: row; justify-content: center;">
+        <div id="field-bank" class="column" style="display: none;">
+            <!-- Draggable Elements -->
+            <div id="Signature-draggable" class="draggable resizable">
+                <!-- <a class="delete-field" onclick="deleteDraggable(this.parentNode);" href="#"><i class="fas fa-times-circle fa-lg"></i></a> -->
+                <p>Sign here</p>                
+            </div>
+            <div id="Initials-draggable" class="draggable resizable">
+                <!-- <a class="delete-field" onclick="deleteDraggable(this.parentNode);" href="#"><i class="fas fa-times-circle fa-lg"></i></a> -->
+                <!-- <input id="initials" class="x2-sign-input" type="text" size="5" placeholder="Initials"></input> -->
+                <p>Initials here</p>
+            </div>
+            <div id="Formula-draggable" class="draggable resizable">
+                <!-- <a class="delete-field" onclick="deleteDraggable(this.parentNode);" href="#"><i class="fas fa-times-circle fa-lg" style="color:red"></i></a> -->
+                <input id="formula" class="x2-sign-input" type="text" minlength="1" size="15" placeholder="Formula" style="font-size:12px"></input>
+            </div>
+            <div id="Checkbox-draggable" class="draggable">
+                <!-- <a class="delete-field" onclick="deleteDraggable(this.parentNode);" href="#"><i class="fas fa-times-circle fa-lg"></i></a> -->
+                <input id="checkbox" class="x2-sign-input" type="checkbox"></input>
+            </div>
+            <div id="Text-draggable" class="draggable resizable">
+                <!-- <a class="delete-field" onclick="deleteDraggable(this.parentNode);" href="#"><i class="fas fa-times-circle fa-lg"></i></a> -->
+                <!-- <textarea id="text" class="x2-sign-input" rows="1" style="resize:none;"></textarea> -->
+                <input id="text" class="x2-sign-input" type="text" size="15" placeholder="Text" style="font-size:12px;"></input>
+            </div>
+            <div id="Name-draggable" class="draggable resizable">
+                <!-- <a class="delete-field" onclick="deleteDraggable(this.parentNode);" href="#"><i class="fas fa-times-circle fa-lg"></i></a> -->
+                <input id="name" class="x2-sign-input" type="text" size="15" placeholder="Name" style="font-size:12px"></input>
+            </div>
+            <div id="Email-draggable" class="draggable resizable">
+                <!-- <a class="delete-field" onclick="deleteDraggable(this.parentNode);" href="#"><i class="fas fa-times-circle fa-lg"></i></a> -->
+                <input id="email" class="x2-sign-input" type="email" placeholder="Email" style="font-size:12px"></input>
+            </div>
+            <div id="Title-draggable" class="draggable resizable">
+                <!-- <a class="delete-field" onclick="deleteDraggable(this.parentNode);" href="#"><i class="fas fa-times-circle fa-lg"></i></a> -->
+                <input id="title" class="x2-sign-input" type="text" placeholder="Title" style="font-size:12px;"></input>
+            </div>
+            <div id="Date-draggable" class="draggable">
+                <!-- <a class="delete-field" onclick="deleteDraggable(this.parentNode);" href="#"><i class="fas fa-times-circle fa-lg"></i></a> -->
+                <i class="far fa-calendar-alt fa-lg"></i>
+            </div>
+            <div id="YesNo-draggable" class="draggable resizable">
+                <select id="YesNo" class="x2-sign-input">
+                    <option value="">Select</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+            <div id="Dropdown-draggable" class="draggable resizable">
+                <select id="Dropdown" class="x2-sign-input">
+                    <option value="">Select</option>
+                </select>
+            </div>
+
+            <div id="FileUpload-draggable" class="draggable">
+                <input id="FileUpload" class="x2-sign-input" type="file" multiple="multiple" disabled="disabled">
+            </div>
+
+
+            <div id="Radio-draggable" class="draggable">
+                <input id="radio" class="x2-sign-input" type="radio"></input>
+            </div>
+        </div>
+        <!-- <span id="pdf-left-sidebar-toggle" onclick="toggleLeftSidebar(event)">☰</span> -->
+        <div id="add-fields" class="add-fields">
+            <div style="margin-right: 20px;">
+                <a id="Signature" class="x2-button x2-sign-field" style="display:block; font-size: Large !important; border-radius: 10px 10px 0px 0px;" onclick="createDraggable(this.getAttribute('id'));"><i class="fas fa-signature"></i> Signature </a>
+                <a id="Initials" class="x2-button x2-sign-field" style="display:block; font-size: Large !important; border-radius: 0px;" onclick="createDraggable(this.getAttribute('id'));"><i class="far fa-closed-captioning"></i> Initial</a>
+                <a id="Formula" class="x2-button x2-sign-field" style="display:block; font-size: Large !important; border-radius: 0px;" onclick="createDraggable(this.getAttribute('id'));"><i class="fas fa-superscript"></i> Formula</a>
+                <a id="Checkbox" class="x2-button x2-sign-field" style="display:block; font-size: Large !important; border-radius: 0px;" onclick="createDraggable(this.getAttribute('id'));"><i class="fas fa-check-circle"></i> Checkbox</a>
+               <a id="YesNo" class="x2-button x2-sign-field" style="display:block; font-size: Large !important; border-radius: 0px;" onclick="createDraggable(this.getAttribute('id'));"><i class="fas fa-check-circle"></i> Yes/No</a>
+                <a 
+                        id="Dropdown" 
+                        class="x2-button x2-sign-field" 
+                        style="display: block; font-size: Large !important; border-radius: 0px;" 
+                        onclick="createDraggable(this.getAttribute('id'));"
+                    >
+                        <i class="fa fa-chevron-circle-down"></i> Dropdown
+                    </a>
+                    <a 
+                        id="FileUpload" 
+                        class="x2-button x2-sign-field" 
+                        style="display: block; font-size: Large !important; border-radius: 0px;" 
+                        onclick="createDraggable(this.getAttribute('id'));"
+                    >
+                        <i class="fas fa-file-upload"></i> Upload File
+                    </a>
+
+                <a id="Radio" class="x2-button x2-sign-field" style="display:block; font-size: Large !important; border-radius: 0px;" onclick="createDraggable(this.getAttribute('id'));"><i class="fas fa-check-circle"></i> Radio Buttons</a>
+                <a id="Text" class="x2-button x2-sign-field" style="display:block; font-size: Large !important; border-radius: 0px;" onclick="createDraggable(this.getAttribute('id'));"><i class="far fa-comment"></i> Text </a>
+                <a id="Name" class="x2-button x2-sign-field" style="display:block; font-size: Large !important; border-radius: 0px;" onclick="createDraggable(this.getAttribute('id'));"><i class="far fa-user"></i> Name</a>
+                <a id="Email" class="x2-button x2-sign-field" style="display:block; font-size: Large !important; border-radius: 0px;" onclick="createDraggable(this.getAttribute('id'));"><i class="fas fa-at"></i> Email</a>
+                <a id="Title" class="x2-button x2-sign-field" style="display:block; font-size: Large !important; border-radius: 0px;" onclick="createDraggable(this.getAttribute('id'));"><i class="fas fa-briefcase"></i> Title</a>
+                <a id="Date" class="x2-button x2-sign-field" style="display:block; font-size: Large !important; border-radius: 0px; border-radius: 0px 0px 10px 10px;" onclick="createDraggable(this.getAttribute('id'));"><i class="fas fa-calendar-alt"></i> Date</a>
+                <?php
+                    $colors = array(
+                        'rgba(3, 207, 252, 0.5)',
+                        'rgba(252, 207, 3, 0.5)',
+                        'rgba(98, 209, 0, 0.5)',
+                        'rgba(255, 17, 0, 0.5)',
+                        'rgba(0, 218, 196, 0.5)',
+                        'rgba(255, 0, 221, 0.5)',
+                        'rgba(0, 140, 255, 0.5)',
+                        'rgba(132, 0, 255, 0.5)',
+                        'rgba(255, 140, 0, 0.5)',
+                        'rgba(173, 173, 173, 0.5)',
+                    );
+
+                    $recList = array();
+                    $options['options'] = array();
+                    $recip = 0;
+                    foreach($contacts as $key => $value) {
+                        $recList[$colors[$recip]] = $value[1];
+                        $options['options'][$colors[$recip]] = array('data-recip' => $recip+1);
+                        $recip += 1;
+                    }
+
+                    echo CHtml::label('Recipient', '#choose-recipient') . CHtml::dropDownList('choose-recipient', 0, $recList, $options);
+                ?>
+                <span class="color-preview"></span>
+            </div>
+            <div class="field-options" style="display: none;">
+                <div style="margin-right: 5px;">
+                    <?php
+                        echo CHtml::label('Required', '#is-required', array('class' => 'input-field-options')) . CHtml::checkbox('is-required', false, array('class' => 'input-field-options'));
+                    ?>
+                </div>
+                <div >
+                    <?php
+                        echo CHtml::label('Read-only', '#read-only', array('class' => 'input-field-options')) .  CHtml::checkbox('read-only', false, array('class' => 'input-field-options'));
+                    ?>
+                </div>
+                <div id="numberCheck">
+                    <?php
+                            echo CHtml::label(
+                                'Disallow Number',
+                                '#DisallowNumber'
+                            )
+                            . CHtml::checkbox(
+                                'DisallowNumber',
+                                false
+                            );
+
+                        // echo CHtml::label('Max text Length', '#text-Length') . CHtml::numberField("text-Length", "" , array("style" => "width:50Px;"));
+                    ?>
+                </div>
+
+                <div id="numberOptions" style="display: none;">
+
+                    <?php
+                        echo CHtml::label('Minimum Value', '#MinValue') . CHtml::numberField("MinValue", "" , array("style" => "width:50Px;"));
+                        echo CHtml::label('Max Value', '#MaxValue') . CHtml::numberField("MaxValue", "" , array("style" => "width:50Px;"));
+                    ?>
+
+
+
+                </div>
+
+
+                <div class="conditional-options">
+                    <div>
+                        <?php
+                            echo CHtml::label(
+                                'Conditional',
+                                '#conditional'
+                            )
+                            . CHtml::checkbox(
+                                'conditional',
+                                false
+                            );
+                        ?>
+                    </div>
+
+                    <div style="display: none;">
+                        <?php
+                            echo CHtml::label(
+                                'Dependent Fields',
+                                '#dependent-fields'
+                            )
+                            . CHtml::dropDownList('dependent-fields', 0, array());
+                        ?>
+                    </div>
+
+                    <div style="display: none;">
+                        <?php
+
+                            echo CHtml::label(
+                                'Trigger Condition',
+                                '#trigger-condition'
+                            )
+                            . CHtml::dropDownList('trigger-condition', 0, array());
+                        ?>
+                    </div>
+
+                    <div style="display: none;">
+                        <?php
+                            echo CHtml::label(
+                                'Trigger Action',
+                                '#show-hide'
+                            )
+                            . CHtml::dropDownList('show-hide', 0, ['show'=> 'Show', 'hide'=>'Hide']);
+                        ?>
+                    </div>
+                </div>
+
+                <!-- 
+                <div>
+                    <?php
+                        echo CHtml::label('Add field to text box', '#AddAtt', array('class' => 'text-options'));
+                        echo "<br>" . CHtml::dropDownList('ModelFields', "" , $AttysArr[$contacts[0][2]], array('style' => 'width: 100px !important;', 'class' => 'text-options'));
+                        echo "<br>" . '<span id="AddAtts" class="x2-button text-options page-next">Add</span>';
+                    ?>
+                </div> 
+                -->
+                <div>
+                    <?php
+                        echo CHtml::button(Yii::t('app', 'Copy to all pages'), array('id' => 'copy-to-all-pages', 'class' => 'input-field-options', 'onclick' => 'copyToAllPages($("#document").find(".active"));'));
+                    ?>
+                </div>
+                <div>
+                    <?php
+                        echo CHtml::button(Yii::t('app', 'Delete Field'), array('id' => 'delete-field', 'onclick' => 'deleteDraggable($("#document").find(".active"));'));
+                    ?>
+                </div>
+                <div>
+                    <?php
+                        echo CHtml::button(Yii::t('app', 'Add Radio'), array('id' => 'radio-field', 'onclick' => 'addRadio($("#document").find(".active"));','style' => 'display: none;',));
+                    ?>
+                </div>
+                    <div id="custom-select-field" style="display: none;">
+                        <?php
+                            echo CHtml::label('Select Option', '#select-option', array('class' => 'input-field-options'));
+                            echo CHtml::dropDownList(
+                                'select-option',
+                                "",
+                                array(
+                                    '' => 'Select',
+                                ),
+                                array(
+                                    'style' => 'width: 100px !important;',
+                                    'class' => 'input-field-options'
+                                )
+                            );
+
+                            echo "<br>" . '<span id="AddAttsOptions" class="x2-button text-options page-next">Add</span>';
+                        ?>
+                    </div>
+
+            </div>
+        </div>
+
+        <div id="document" class="column">
+            <!-- <div class="row" style="justify-content: center;">
+                <div class="x2-button-group" style="text-align: center;">
+                    <span id="prev" class="x2-button page-prev">Previous</span>
+                    <span id="next" class="x2-button page-next">Next</span>
+                    &nbsp; &nbsp;
+                    <span>Page: <span id="page_num"></span> / <span id="page_count"></span></span>
+                </div>
+            </div> -->
+            <!-- <div id="x2-sign-template" class="row"> -->
+             <!--   <canvas id="pdf" class="x2-sign-doc"></canvas> -->
+              <!--  <div id="pdf-dropzone"></div> -->
+            <!-- </div> -->
+        </div>
+        <!-- <div class="pt-3 pl-5 w-25">
+            <h5>How to Create a Template</h5>
+            <p class="align-top">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla placerat vulputate dictum. Aenean in vulputate nisl. Donec non felis orci. Aenean in ultricies dui. Quisque lobortis pellentesque magna, commodo molestie enim fringilla consequat. Aenean et condimentum justo. Integer vitae lacinia odio.</p>
+        </div> -->
+    </div>
+    </div>
+    <span id="pdf-right-sidebar-toggle" onclick="toggleRightSidebar(event)">☰</span>
+    <div id="pdf-right-sidebar" class="col-2 thumbnail-sidebar">
+        <div id="thumbnail-container"></div>
+    </div>
+</div>
+<div class="cell right pb-4" style="float: right; margin-top: 10px; margin-right: 10px;">
+    <button class='back-button-container btn btn-light flex-item' style='border: 1px solid #8e9296;'>Back</button>
+    <button class='create-button-container btn btn-warning flex-item'><?php echo ($envelope->hostedEnvelope) ? "Save" : "Send Document" ?></button>
+</div>
+<!-- DISABLED FOR TWORLD - PCZUPIL - 10-12-2021
+<script>
+       var contacts = <?php echo json_encode($contacts) ?> ;
+       var dropdownAtts = <?php echo json_encode($AttysArr) ?>;
+       $('#choose-recipient').change(function() {
+        var $el = $('#ModelFields');
+        $el.empty(); // remove old options
+        $.each(dropdownAtts[contacts[($('#choose-recipient').find(':selected').attr('data-recip') - 1)][2]], function(key,value) {
+           var ops = $("<optgroup label='"+ key + "'>");
+           $.each(value, function(key,value){
+                ops.append($("<option></option>")
+                 .attr("value", key).text(value));
+                });
+            $el.append(ops);
+            });
+        });
+</script>
+-->
+<script>
+var w = window.innerWidth; // 1544
+var h = window.innerHeight; //1080
+//if the ratio of hight to width gets bigger then hide the side bar
+var windownRatio = 1544/1080;
+if(w/h < windownRatio){
+    $('#pdf-right-sidebar').hide();
+}
+function toggleRightSidebar(e) {
+    e.preventDefault();
+    window.addEventListener('scroll', function() {
+        if (window.scrollY > 105) {
+            $('#thumbnail-container').css('position', 'fixed');
+        } else {
+            $('#thumbnail-container').css('position', 'static');
+        }
+    });
+    
+    $(e.currentTarget).toggleClass('thumbnail-sidebar-toggle-right-on toggle-right-on');
+    $('#pdf-right-sidebar').toggleClass('toggle-right-on');
+}
+
+// function toggleLeftSidebar(e) {
+//     e.preventDefault();   
+//     $(e.currentTarget).toggleClass('thumbnail-sidebar-toggle-left-on toggle-left-on');
+//     $('#add-fields').toggleClass('toggle-left-on show');
+// }
+
+</script>
+
+<?php
+    $this->endWidget();
+?>
+

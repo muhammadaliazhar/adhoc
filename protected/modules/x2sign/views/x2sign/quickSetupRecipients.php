@@ -1,0 +1,450 @@
+<?php
+/***********************************************************************************
+* Copyright (C) 2011-2019 X2 Engine Inc. All Rights Reserved.
+*
+* X2 Engine Inc.
+* P.O. Box 610121
+* Redwood City, California 94061 USA
+* Company website: http://www.x2engine.com
+*
+* X2 Engine Inc. grants you a perpetual, non-exclusive, non-transferable license
+* to install and use this Software for your internal business purposes only
+* for the number of users purchased by you. Your use of this Software for
+* additional users is not covered by this license and requires a separate
+* license purchase for such users. You shall not distribute, license, or
+* sublicense the Software. Title, ownership, and all intellectual property
+* rights in the Software belong exclusively to X2 Engine. You agree not to file
+* any patent applications covering, relating to, or depicting this Software
+* or modifications thereto, and you agree to assign any patentable inventions
+* resulting from your use of this Software to X2 Engine.
+*
+* THIS SOFTWARE IS PROVIDED "AS IS" AND WITHOUT WARRANTIES OF ANY KIND, EITHER
+* EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE IMPLIED WARRANTIES OF
+* MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT.
+***********************************************************************************/
+
+/**
+ * @author Peter Czupil <peter@x2engine.com>
+ */
+
+// Setup Tips/Tour
+//Tours::loadTips('x2sign.quickSetupRecipients');
+
+// Import Bootstrap
+Yii::app()->clientScript->registerCssFile('https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css');
+Yii::app()->clientScript->registerScriptFile('https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js');
+Yii::app()->clientScript->registerScriptFile('https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js');
+
+$cs = Yii::app()->clientScript;
+$cs->registerCssFile(Yii::app()->theme->baseUrl.'/css/ui-elements.css');
+$cs->registerCssFile(Yii::app()->theme->baseUrl.'/css/fontAwesome/css/font-awesome.css');
+$cs->registerCssFile(Yii::app()->theme->baseUrl.'/css/fontAwesome/css/all.min.css');
+$cs->registerCssFile(Yii::app()->theme->baseUrl.'/css/fontAwesome/css/v4-shims.min.css');
+$cs->registerCssFile(Yii::app()->theme->baseUrl.'/css/form.css?' . Yii::app()->params->buildDate, 'screen, projection');
+
+Yii::app()->clientScript->registerCssFile(Yii::app()->controller->module->assetsUrl.'/css/quicksend.css');
+Yii::app()->clientScript->registerScriptFile(Yii::app()->controller->module->assetsUrl.'/js/signable.js');
+Yii::app()->clientScript->registerScript("quickRecipientJS", "
+    x2.x2sign = {};
+    x2.x2sign.recipientNum = 0;
+    
+    // Inspiration taken from: https://stackoverflow.com/questions/3519861/yes-or-no-confirm-box-using-jquery
+    function confirmDialog(message) {
+        $('<div></div>').appendTo('body')
+            .html('<div><h6>' + message + '</h6></div>')
+            .dialog({
+                modal: true,
+                title: 'Delete message',
+                zIndex: 10000,
+                autoOpen: true,
+                width: 'auto',
+                resizable: false,
+                buttons: {
+                    Yes: function() {
+                        $('body').append('<h1>Confirm Dialog Result: <i>Yes</i></h1>');
+                        $(this).dialog('close');
+                        window.location.href = '" . Yii::app()->controller->createUrl('/x2sign/cancel2', array('id' => $envelope->id)) . "';
+                    },
+                    No: function() {
+                        $('body').append('<h1>Confirm Dialog Result: <i>No</i></h1>');
+                        $(this).dialog('close');
+                    }
+                },
+                close: function(event, ui) {
+                    $(this).remove();
+                }
+            });
+    };
+
+
+    $('#cancel-button').on('click', function() {
+        confirmDialog('Are you sure you want to cancel this envelope? All progress will be lost.');
+    });
+    
+    $('#edit-document-order').on('click', function() {
+        window.location.href = '" . Yii::app()->controller->createUrl('/x2sign/editDocs', array('id' => $envelope->id)) . "';
+    });
+
+    $('#add-document').on('click', function() {
+        window.location.href = '" . Yii::app()->controller->createUrl('/x2sign/addDocs', array('id' => $envelope->id)) . "';
+    });
+
+    $('#orderCheck').on('click', function() {
+        var number = 1;
+        $('.orderCheckDiv' ).each(function( index ) {
+            $( this ).toggle();
+            $( this ).find('input').val(number);
+            number++;
+        });
+    });
+
+
+    let recipients = " . $recipients . "; 
+    if(recipients.length !== 0){
+        recipients.forEach(function(item) {
+            x2.x2sign.recipientNum += 1;
+            if(x2.x2sign.recipientNum == 1) {
+                $('#recipient-card').find('.firstNameInput').val(item['firstName']);
+                $('#recipient-card').find('.lastNameInput').val(item['lastName']);
+                $('#recipient-card').find('.emailInput').val(item['email']);
+                $('#recipient-card').find('.orderNum').val(item['spot']);
+                $('#recipient-card').find('.roleDropdown').val(item['contactRole']);
+                if (item['viewer'] == '0') { // 0 => signing is not required => recip is a viewer
+                    $('#recipient-card').find('.is-viewer').prop('checked', true);
+                }
+                //$('#recipient-card').find('.hiddenModel').val(item['displayModel']);
+                //$('#recipient-card').find('.hiddenId').val(item['hiddenId']);
+            } else { 
+                // Quick way of appending recipient form element
+                let newRecipCard = $('#recipient-card').clone();
+                $(newRecipCard).find('input').val('');
+                $(newRecipCard).find('.recipient-delete').show();
+                $(newRecipCard).find('.firstNameInput').val(item['firstName']);
+                $(newRecipCard).find('.lastNameInput').val(item['lastName']);
+                $(newRecipCard).find('.emailInput').val(item['email']);
+                $(newRecipCard).find('.orderNum').val(item['spot']);
+                $(newRecipCard).find('.roleDropdown').val(item['contactRole']);
+                if (item['viewer'] == '0') { // 0 => signing is not required => recip is a viewer
+                    $(newRecipCard).find('.is-viewer').prop('checked', true);
+                }
+                //$(newRecipCard).find('.hiddenModel').val(item['displayModel']);
+                //$(newRecipCard).find('.hiddenId').val(item['hiddenId']);
+
+                $(newRecipCard).appendTo('#recipientForm');
+            }
+
+            //this will mark self if set to user
+            //if(item['displayModel'] == 'User') $('.myselfCheck').last().prop('checked', true);;
+
+            if($('#orderCheck').prop('checked'))
+                $('.orderCheckDiv').show();    
+        });
+    }else{
+        x2.x2sign.recipientNum = 1;
+    }    
+
+
+    $('#recipientForm').on('click', '.search-user', function() {
+        console.log('Searching');
+        var firstSpot = $(this);
+        auxlib.containerLoading($(this).parents('.recipientDiv'));
+        $.ajax({
+            url: '" . Yii::app()->controller->createUrl('/x2sign/getListQuick') . "',
+            type: 'GET',
+            dataType: 'json',
+            data: {
+                type:'signees',
+                query: $(this).val(),
+                first: $(firstSpot).parent().parent().parent().find('.firstNameInput').val(),
+                last: $(firstSpot).parent().parent().parent().find('.lastNameInput').val(),
+                email: $(firstSpot).parent().parent().parent().find('.emailInput').val(),
+                selModel: $(this).parent().parent().parent().find('#sendModel').val() 
+            },
+            success: function (obj) {
+                $(firstSpot).parent().parent().find('#preFill').slideDown();
+                console.log(obj);
+                var modelList = obj[0];
+                var auto = [];
+                console.log(modelList);
+                console.log($(this));
+                $(firstSpot).parent().parent().find('#lookUp').empty();
+                for (var i = 0; i < modelList.length; i++) {
+                    $(firstSpot).parent().parent().find('#lookUp').append(\"<option value='\" + modelList[i]['modelId'] + \"'> \" + modelList[i]['viewName'] + \"  </option>\"); 
+                }
+                $(firstSpot).css('background-color', '#CECECE; !important');
+                $(firstSpot).css('border-color', '#CECECE; !important');
+                auxlib.containerLoadingStop($(firstSpot).parents('.recipientDiv'));
+            },
+            error: function (data) {
+                alert(data.responseText);
+                auxlib.containerLoadingStop($(firstSpot).parents('.recipientDiv'));
+            },
+            complete: function () {
+                auxlib.containerLoadingStop($(firstSpot).parents('.recipientDiv'));
+            }
+        });
+    });
+
+    $('#recipientForm').last().on('click', '.myselfCheck', function() {
+        var firstSpot = $(this);
+        if($(firstSpot).prop('checked')) {
+            $(firstSpot).parent().parent().parent().find('.firstNameInput').val('Self').prop('readonly', true);
+            $(firstSpot).parent().parent().parent().find('.lastNameInput').val('Self').prop('readonly', true);
+            $(firstSpot).parent().parent().parent().find('.emailInput').val('" . $user->emailAddress . "').prop('readonly', true);
+            $(firstSpot).parent().parent().parent().find('.hiddenId').val(1);
+            $(firstSpot).parent().parent().parent().find('.hiddenModel').val('Self');
+        } else {
+            $(firstSpot).parent().parent().parent().find('.firstNameInput').val('').prop('readonly', false);
+            $(firstSpot).parent().parent().parent().find('.lastNameInput').val('').prop('readonly', false);
+            $(firstSpot).parent().parent().parent().find('.emailInput').val('').prop('readonly', false);
+            $(firstSpot).parent().parent().parent().find('.hiddenId').val('');
+            $(firstSpot).parent().parent().parent().find('.hiddenModel').val('');
+        }
+    });
+
+    $('#recipientForm').on('click', '.preEx', function() {
+        var firstSpot = $(this);
+        $.ajax({
+            url: '" . Yii::app()->controller->createUrl('/x2sign/getQuickRecord') . "',
+            type: 'GET',
+            dataType:'json',
+            
+            data: {
+                selModel: $(this).parent().parent().parent().parent().find('#sendModel').val(),
+                id: $(this).parent().parent().parent().find('#lookUp').val() 
+            },
+            success: function (obj) {
+                console.log(obj);
+                $(firstSpot).parent().parent().parent().parent().find('.emailInput').val(obj[0]['email']);
+                $(firstSpot).parent().parent().parent().parent().find('.firstNameInput').val(obj[0]['firstName']);
+                $(firstSpot).parent().parent().parent().parent().find('.lastNameInput').val(obj[0]['lastName']);
+                $(firstSpot).parent().parent().parent().parent().find('.hiddenId').val(obj[0]['modelId']);
+                $(firstSpot).parent().parent().parent().parent().find('.hiddenModel').val(obj[0]['modelType']);
+                $(firstSpot).parent().parent().parent().parent().find('.firstNameInput').prop('readonly', true);
+                $(firstSpot).parent().parent().parent().parent().find('.lastNameInput').prop('readonly', true);
+                $(firstSpot).parent().parent().parent().parent().find('.emailInput').prop('readonly', true);
+            },
+            error: function (data) {
+                alert(data.responseText);
+            },
+            complete: function () {
+            }
+        });
+    });
+
+    $('#addRecipientLink').on('click', function() {
+        x2.x2sign.recipientNum += 1;   
+        let recipCard = $('#recipient-card').clone();
+        $(recipCard).find('input').val('');
+        $(recipCard).find('.recipient-delete').show();
+        $(recipCard).find('#preFill').css('display', 'none');
+         $(recipCard).find('.hiddenId').val('');
+        $(recipCard).find('.hiddenModel').val('');
+        $(recipCard).find('.firstNameInput').prop('readonly', false);
+        $(recipCard).find('.lastNameInput').prop('readonly', false);
+        $(recipCard).find('.emailInput').prop('readonly', false);
+
+        if($('#orderCheck').prop('checked')){
+            //we shall get the highest value then
+            var highnum = 0;
+            $('.orderCheckDiv' ).each(function( index ) {
+                if(parseInt($( this ).find('input').val()) > highnum)
+                    highnum = parseInt($( this ).find('input').val());
+            });
+
+            $(recipCard).find('.orderCheckDiv').find('input').val(highnum + 1);
+
+ 
+        }
+
+
+
+        $(recipCard).appendTo('#recipientForm');
+
+        //make sure to uncheck self if it is checked
+        if($('.myselfCheck:last').is(':checked'))
+            $('.myselfCheck:last').click();
+
+        if ($('.is-viewer:last').is(':checked'))
+            $('.is-viewer:last').click();
+
+
+    });
+
+
+    
+    // This uses the same confirm dialog as the 'void envelope' button,
+    // however that is hard-coded for the void message and didn't worry
+    // about changing it to be general. TO-DO in the future to simplify
+    // this code. (Clifton clifton@x2engine.com)
+    $('#finish-later').on('click', function() {
+        $('<div></div>').appendTo('body')
+            .html('<div><h6>Finish this envelope later? Progress will be saved.</h6></div>')
+            .dialog({
+                modal: true,
+                title: 'Save',
+                zIndex: 10000,
+                autoOpen: true,
+                width: 'auto',
+                resizable: false,
+                buttons: {
+                    Yes: function() {
+                        $('body').append('<h1>Confirm Dialog Result: <i>Yes</i></h1>');
+                        $(this).dialog('close');
+                        var recipients = [];
+                        $('.recipient').each(function() {
+                            recipients.push({
+                                'firstName': $(this).find('.firstNameInput').val(),
+                                'lastName': $(this).find('.lastNameInput').val(),
+                                'email': $(this).find('.emailInput').val(),
+                                'displayModel': 'Contacts',
+                                'hiddenModel': $(this).find('.hiddenModel').val(),
+                                'hiddenId': $(this).find('.hiddenId').val(),   
+                                'order':  $(this).find('.orderNum').val(), 
+                                'viewer': $(this).find('.is-viewer').is(':checked'),
+                            });    
+                        });
+
+                        // Check if there's any duplicate recipients
+                        let values = recipients.map(function(item) { return item.email; });
+                        if(new Set(values).size !== recipients.length) {
+                            alert('Remove any duplicate contacts1');
+                            return;        
+                        }
+
+                        $.ajax({
+                            url: '" . Yii::app()->controller->createUrl('/x2sign/finishLater', array('id' => $envelope->id)) . "',
+                            type: 'POST',
+                            data: {
+                                'recipients': recipients,
+                            },
+                            success: function() {
+                                window.location.href = '" . Yii::app()->controller->createUrl('/x2sign/index') . "';
+                            }
+                        });
+                    },
+                    No: function() {
+                        $('body').append('<h1>Confirm Dialog Result: <i>No</i></h1>');
+                        $(this).dialog('close');
+                    }
+                },
+                close: function(event, ui) {
+                    $(this).remove();
+                }
+        });
+    });
+
+    deleteRecipient = function(elem) {
+        $(elem).closest('.recipient').remove();
+    }
+");
+
+Yii::app()->clientScript->registerCss("setupRecipients", "
+    .delete-recipient-icon:hover {
+        color: red;
+        transform: scale(1.2);
+        cursor: pointer;
+    }
+
+    .field-required {
+        color: red;
+    }
+
+    input:checked {
+        background-color: #284724;
+    }
+");
+?>
+
+<div class="add-recipient-container section-container container">
+    <div class="section-header">
+        <h1 id="add-documents">Add Recipients</h1>
+        <a class="accordianBtn"><i class="fa fa-angle-down"></i></a>
+    </div>
+
+    <div class="section-body">
+        <div style="font-size: 18px; text-color: grey;">Sender</div>
+        <div id="sender-name" style="font-size: 14px;"><?php echo $user->firstName . " " . $user->lastName; ?></div>
+
+        <div class="mt-3">
+            <div>
+                <input type="checkbox" id="orderCheck" name="orderCheck" <?php if($envelope->sequential) echo "checked" ?> >
+                <span style="font-size: 18px; text-color: grey;">Order Signatures
+                    <?php echo X2Html::hint(Yii::t('x2sign', 'If checked, the envelope will require signatures in order of the recipients.'));?>
+                </span>
+            </div>
+        </div>
+
+        <div class="recipientDiv">
+            <div class="mt-3">
+                <div id="recipient-label" style="font-size: 18px; text-color: grey;">Recipients</div>
+                    <form id="recipientForm" method="post" action="<?php echo Yii::app()->controller->createUrl('/x2sign/quickSetupTemplate', array('id' => $envelope->id)); ?>">
+                        <div id="recipient-card" class="card col p-5 mb-5 mt-2 form-group recipient shadow-sm">
+                            <div class='recipient-delete card-title pt-1' style='text-align: end; display: none;'>
+                                <a class="right delete" onclick="deleteRecipient(this);"><i class="far fa-lg fa-times-circle delete-recipient-icon"></i></a>
+                            </div>
+                            <input type="hidden" name="<?php echo Yii::app()->request->csrfTokenName; ?>" value="<?php echo Yii::app()->request->csrfToken; ?>" />
+                            <div class="row">
+                                     <div id='order'  class='col-auto orderCheckDiv'>
+                                         <label for="name">Order</label>
+                                         <input type="text" id="quantity" name="quantity" style="width: 50px; background: white !important;" min="1" max="10" class='form-control orderNum' value=1>
+                                     </div>
+                                     <div class="col-auto" style="align-self: center;">
+                                        <input type='checkbox' class='myselfCheck' id='myselfCheck' name='myselfCheck' />
+                                        <label for="myself"> Set <?php echo User::getMe()->fullName ?> As Signer </label>
+                                     </div>
+                                     <div class="col-auto" style="align-self: center;">
+                                            <input type='checkbox' class='is-viewer' id='is-viewer' name='is-viewer' />
+                                            <label for='viewer'>Viewer</label>
+                                     </div>
+                            </div>
+                            <div class="row mt-3">
+                                     <div class="col-auto" style="align-self: end;">
+                                        <label for="firstNameInput">First Name <span class="field-required">*</span></label>
+                                        <input class="firstNameInput form-control" name="firstNameInput" required />
+                                     </div>
+                                     <div class="col-auto">
+                                        <label for="lastNameInput"><br>Last Name <span class="field-required">*</span></label>
+                                        <input class="lastNameInput form-control" name="lastNameInput" required />
+                                     </div>
+                                     <div class="col-auto">
+                                        <label for="emailInput"><br>Email <span class="field-required">*</span></label>
+                                        <input class="emailInput form-control" name="emailInput" required />
+                                     </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-4">
+                                        <label for="modelInput">Record Type</label>
+                                        <select id = 'sendModel' class='sendModel form-control' style="background: white !important;">
+                                            <option>Contacts</option><option>Buyers</option><option>Sellers</option>
+                                        </select>
+                                </div>
+                            </div>
+
+                            <div class="d-flex flex-column mt-3" style="margin-left: 0px;">
+                                <input class='hiddenModel' type="hidden" name="hiddenModel"/>
+                                <input class='hiddenId' type="hidden" name="hiddenId"/>
+                                <div class="col-3" style="margin-left: 0px; padding-left: 0px;">
+                                    <button class='search-user form-control quicksend-btn btn-lg p-1' type='button'>Search</button>
+                                </div>
+                                <br>
+                                <div id='preFill' class="col-9 mt-3" style="display: none; padding-left: 0px;">
+                                    <select id = 'lookUp' class='lookUp form-control' style="background-color: white !important;">
+                                        <option>Fill in above for pre-existing Records</option>
+                                    </select>
+                                <br>
+                                <div class="col-3" style="margin-left: 0px; padding-left: 0px;">
+                                    <button class="preEx form-control quicksend-btn btn-sm" type="button" style="padding-left: 0px;">Use this Record</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <button id="addRecipientLink" class="btn quicksend-btn">+ Add Recipient</button>
+    </div>
+</div>
+
+

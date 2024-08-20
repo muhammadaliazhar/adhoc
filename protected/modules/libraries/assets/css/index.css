@@ -1,0 +1,418 @@
+/*!*********************************************************************************
+ * X2CRM is a customer relationship management program developed by
+ * X2Engine, Inc. Copyright (C) 2011-2016 X2Engine Inc.
+ * 
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation with the addition of the following permission added
+ * to Section 15 as permitted in Section 7(a): FOR ANY PART OF THE COVERED WORK
+ * IN WHICH THE COPYRIGHT IS OWNED BY X2ENGINE, X2ENGINE DISCLAIMS THE WARRANTY
+ * OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ * 
+ * You can contact X2Engine, Inc. P.O. Box 66752, Scotts Valley,
+ * California 95067, USA. on our website at www.x2crm.com, or at our
+ * email address: contact@x2engine.com.
+ * 
+ * The interactive user interfaces in modified source and object code versions
+ * of this program must display Appropriate Legal Notices, as required under
+ * Section 5 of the GNU Affero General Public License version 3.
+ * 
+ * In accordance with Section 7(b) of the GNU Affero General Public License version 3,
+ * these Appropriate Legal Notices must retain the display of the "Powered by
+ * X2Engine" logo. If the display of the logo is not reasonably feasible for
+ * technical reasons, the Appropriate Legal Notices must display the words
+ * "Powered by X2Engine".
+ **********************************************************************************/
+/***********************************************************************************
+ * X2CRM is a customer relationship management program developed by
+ * X2Engine, Inc. Copyright (C) 2011-2016 X2Engine Inc.
+ * 
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation with the addition of the following permission added
+ * to Section 15 as permitted in Section 7(a): FOR ANY PART OF THE COVERED WORK
+ * IN WHICH THE COPYRIGHT IS OWNED BY X2ENGINE, X2ENGINE DISCLAIMS THE WARRANTY
+ * OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ * 
+ * You can contact X2Engine, Inc. P.O. Box 66752, Scotts Valley,
+ * California 95067, USA. on our website at www.x2crm.com, or at our
+ * email address: contact@x2engine.com.
+ * 
+ * The interactive user interfaces in modified source and object code versions
+ * of this program must display Appropriate Legal Notices, as required under
+ * Section 5 of the GNU Affero General Public License version 3.
+ * 
+ * In accordance with Section 7(b) of the GNU Affero General Public License version 3,
+ * these Appropriate Legal Notices must retain the display of the "Powered by
+ * X2Engine" logo. If the display of the logo is not reasonably feasible for
+ * technical reasons, the Appropriate Legal Notices must display the words
+ * "Powered by X2Engine".
+ **********************************************************************************/
+/***************************************
+* This file is responsible for mantaining
+* general purpose mixins and classes. 
+***************************************/
+/***********************************************************************************
+ * X2CRM is a customer relationship management program developed by
+ * X2Engine, Inc. Copyright (C) 2011-2016 X2Engine Inc.
+ * 
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation with the addition of the following permission added
+ * to Section 15 as permitted in Section 7(a): FOR ANY PART OF THE COVERED WORK
+ * IN WHICH THE COPYRIGHT IS OWNED BY X2ENGINE, X2ENGINE DISCLAIMS THE WARRANTY
+ * OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ * 
+ * You can contact X2Engine, Inc. P.O. Box 66752, Scotts Valley,
+ * California 95067, USA. on our website at www.x2crm.com, or at our
+ * email address: contact@x2engine.com.
+ * 
+ * The interactive user interfaces in modified source and object code versions
+ * of this program must display Appropriate Legal Notices, as required under
+ * Section 5 of the GNU Affero General Public License version 3.
+ * 
+ * In accordance with Section 7(b) of the GNU Affero General Public License version 3,
+ * these Appropriate Legal Notices must retain the display of the "Powered by
+ * X2Engine" logo. If the display of the logo is not reasonably feasible for
+ * technical reasons, the Appropriate Legal Notices must display the words
+ * "Powered by X2Engine".
+ **********************************************************************************/
+/***********************************************************************
+* Grays 
+***********************************************************************/
+/***********************************************************************
+* Blues
+***********************************************************************/
+/***********************************************************************
+* Reds 
+***********************************************************************/
+/***********************************************************************
+* Greens 
+***********************************************************************/
+/***********************************************************************
+* This section is made to correspond with the theme keys in ThemeGenerator
+***********************************************************************/
+/***********************************************************************
+* Responsive design
+***********************************************************************/
+/***************************************
+* Mixin for border radius 
+***************************************/
+/***********************************************************************
+* animations 
+***********************************************************************/
+/***************************************
+* Mixin for box shadow
+***************************************/
+/***************************************
+* Mixin for text field placeholder text
+***************************************/
+/***************************************
+* CSS to extend when something 
+* should look like a link
+***************************************/
+/* line 173, ../../../../../compass/css/lib/_standards.scss */
+.pseudo-link {
+  cursor: pointer;
+  color: #004baf;
+  transition: color .1s;
+}
+/* line 178, ../../../../../compass/css/lib/_standards.scss */
+.pseudo-link:hover {
+  color: #006cfb;
+}
+
+/***************************************
+* CSS to extend when for elements that 
+* become transparent on mouseover
+***************************************/
+/* line 196, ../../../../../compass/css/lib/_standards.scss */
+.opacity-hover {
+  opacity: 0.3;
+}
+/* line 191, ../../../../../compass/css/lib/_standards.scss */
+.opacity-hover:hover {
+  opacity: 1;
+}
+
+/***************************************
+* Apply the standard box shadow currently
+* used on x2-island-layout items
+***************************************/
+/*******************************************
+* Mixin for applying a fontAwesome icon
+* SEE _icons.scss FOR A BETTER IMPLEMENTATION
+******************************************/
+/***********************************************************************************
+ * X2CRM is a customer relationship management program developed by
+ * X2Engine, Inc. Copyright (C) 2011-2016 X2Engine Inc.
+ * 
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation with the addition of the following permission added
+ * to Section 15 as permitted in Section 7(a): FOR ANY PART OF THE COVERED WORK
+ * IN WHICH THE COPYRIGHT IS OWNED BY X2ENGINE, X2ENGINE DISCLAIMS THE WARRANTY
+ * OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ * 
+ * You can contact X2Engine, Inc. P.O. Box 66752, Scotts Valley,
+ * California 95067, USA. on our website at www.x2crm.com, or at our
+ * email address: contact@x2engine.com.
+ * 
+ * The interactive user interfaces in modified source and object code versions
+ * of this program must display Appropriate Legal Notices, as required under
+ * Section 5 of the GNU Affero General Public License version 3.
+ * 
+ * In accordance with Section 7(b) of the GNU Affero General Public License version 3,
+ * these Appropriate Legal Notices must retain the display of the "Powered by
+ * X2Engine" logo. If the display of the logo is not reasonably feasible for
+ * technical reasons, the Appropriate Legal Notices must display the words
+ * "Powered by X2Engine".
+ **********************************************************************************/
+/***********************************************************************
+* Grays 
+***********************************************************************/
+/***********************************************************************
+* Blues
+***********************************************************************/
+/***********************************************************************
+* Reds 
+***********************************************************************/
+/***********************************************************************
+* Greens 
+***********************************************************************/
+/***********************************************************************
+* This section is made to correspond with the theme keys in ThemeGenerator
+***********************************************************************/
+/* line 41, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+.ui-widget-content .folder-selector-option-container a {
+  color: #004baf;
+}
+/* line 43, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+.ui-widget-content .folder-selector-option-container a:hover {
+  color: #006cfb;
+}
+
+/* line 48, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+#folder-selector-list-view {
+  margin-top: 8px;
+}
+/* line 49, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+#folder-selector-list-view .summary {
+  display: none;
+}
+/* line 53, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+#folder-selector-list-view .pager {
+  border: none;
+}
+/* line 56, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+#folder-selector-list-view .items {
+  border-radius: 0;
+}
+/* line 58, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+#folder-selector-list-view .items .folder-selector-option-container {
+  cursor: pointer;
+  padding: 5px 7px 5px 7px;
+}
+/* line 59, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+#folder-selector-list-view .items .folder-selector-option-container.disabled-folder-option {
+  color: #c5c5c5;
+  background: #f9f9f9;
+}
+/* line 62, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+#folder-selector-list-view .items .folder-selector-option-container.disabled-folder-option a {
+  color: #c5c5c5 !important;
+}
+/* line 66, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+#folder-selector-list-view .items .folder-selector-option-container:hover {
+  /* @theme background light_background */
+  background: #f9f9f9;
+}
+/* line 72, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+#folder-selector-list-view .items .folder-selector-option-container .file-system-object-name {
+  margin-left: 5px;
+}
+/* line 75, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+#folder-selector-list-view .items .folder-selector-option-container.selected {
+  /* @theme background highlight2 */
+  background: #b7eab7;
+}
+
+/* line 83, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+#x2-gridview-flashes-container {
+  position: relative;
+  right: 4px;
+}
+
+/* line 90, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+#folder-contents #create-folder-button .fa-inverse {
+  color: white;
+  /* @theme color darker_text */
+}
+/* line 95, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+#folder-contents .file-system-header {
+  border-radius: 0 !important;
+}
+/* line 99, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+#folder-contents .page-title > .x2-button {
+  height: 24px;
+}
+/* line 103, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+#folder-contents .items {
+  border-radius: 0;
+  border: none;
+}
+/* line 104, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+#folder-contents .items * {
+  box-sizing: border-box;
+}
+/* line 109, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+#folder-contents .items th {
+  line-height: inherit;
+  border-right: none;
+  text-align: left;
+  background: inherit;
+  padding: 11px 5px 11px 5px;
+  border-bottom: 1px solid #d9d9d9;
+}
+/* line 116, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+#folder-contents .items th:first-child {
+  text-align: center;
+}
+/* line 121, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+#folder-contents .items tr {
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  background-color: #FFF;
+}
+/* line 122, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+#folder-contents .items tr.ui-draggable-dragging {
+  z-index: 1000 !important;
+  border-radius: 3px;
+  -webkit-box-shadow: 0px 2px 5px 2px rgba(0, 0, 0, 0.4);
+  -moz-box-shadow: 0px 2px 5px 2px rgba(0, 0, 0, 0.4);
+  -ms-box-shadow: 0px 2px 5px 2px rgba(0, 0, 0, 0.4);
+  -o-box-shadow: 0px 2px 5px 2px rgba(0, 0, 0, 0.4);
+  box-shadow: 0px 2px 5px 2px rgba(0, 0, 0, 0.4);
+  border-bottom: none;
+  width: 150px;
+  overflow: hidden;
+}
+/* line 128, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+#folder-contents .items tr.ui-draggable-dragging .file-system-object-owner, #folder-contents .items tr.ui-draggable-dragging .file-system-object-last-updated,
+#folder-contents .items tr.ui-draggable-dragging .file-system-object-visibility, #folder-contents .items tr.ui-draggable-dragging td:first-child {
+  display: none;
+}
+/* line 135, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+#folder-contents .items tr.moving-file td {
+  background: #f9f9f9;
+  /* @theme background lighter_background */
+  color: #c5c5c5;
+}
+/* line 139, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+#folder-contents .items tr.moving-file td a {
+  color: #c5c5c5;
+}
+/* line 144, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+#folder-contents .items tr td {
+  padding: 11px 5px 11px 5px;
+  border-right: none;
+  border-bottom: 1px solid #d9d9d9;
+}
+/* line 153, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+#folder-contents .items tr .file-system-object-name {
+  margin-left: 5px;
+}
+/* line 156, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+#folder-contents .items tr .file-system-object-link {
+  float: left;
+  width: 30%;
+}
+/* line 160, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+#folder-contents .items tr .file-system-object-attributes {
+  float: right;
+  width: 70%;
+  text-align: center;
+}
+/* line 165, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+#folder-contents .items tr .file-system-object-owner {
+  float: left;
+  width: 30%;
+}
+/* line 169, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+#folder-contents .items tr .file-system-object-last-updated {
+  float: left;
+  width: 45%;
+}
+/* line 173, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+#folder-contents .items tr .file-system-object-visibility {
+  float: left;
+  width: 15%;
+}
+/* line 181, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+#folder-contents .pager {
+  border: none;
+}
+
+/* line 186, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+#attachments-grid {
+  margin-top: 17px;
+}
+
+/* line 189, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+.file-system-header {
+  padding: 10px;
+  font-weight: bold;
+}
+
+/* line 194, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+#folder-contents .items {
+  border-bottom: 0px;
+}
+
+/* line 197, ../../../../../compass/protected/modules/docs/assets/css/index.scss */
+.file-system-clear-fix:after {
+  content: ' ';
+  display: block;
+  height: 0;
+  clear: both;
+}

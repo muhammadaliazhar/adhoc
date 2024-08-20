@@ -1,0 +1,9 @@
+{
+    "name": "Get Color-Spaces",
+    "teaserText": "This script extracts all color related information from an existing PDF file.",
+    "faIcon": "&#xf75b;",
+    "previewFiles": [
+        "../../../../../classes/Inspector/ColorInspector.php",
+        "../../../../../classes/ContentStreamProcessor/ColorProcessor.php"
+    ]
+}

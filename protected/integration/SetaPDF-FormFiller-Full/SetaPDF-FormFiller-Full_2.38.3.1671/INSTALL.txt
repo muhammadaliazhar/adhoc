@@ -1,0 +1,38 @@
+SetaPDF Installation
+++++++++++++++++++++++++++++
+The main files of all SetaPDF components are located in the folder "library/SetaPDF/".
+
+The SetaPDF components come with an own autoload function which will register itself in the
+spl provided __autoload stack by simply requiring the Autoload.php file:
+
+    require_once('path/to/library/SetaPDF/Autoload.php');
+
+After that you can use all classes without requiring any file manually.
+
+For sure you also can register the classes in your own PSR-0 autoload implementation:
+
+    $autoload->registerPsr0('SetaPDF_', 'path/to/library/');
+
+The documentation and demos folders are not needed for productive usage.
+
+
+FOR EVALUATION VERSIONS ONLY
+++++++++++++++++++++++++++++
+An evaluation package is encoded with Ioncube.
+This requires a loader to be installed on your server.
+
+An evaluation version is separated into two parts: The PHP files and a license file.
+
+License files are named .htSetaPDF-<COMPONENT-NAME>.icl
+
+    NOTICE THE DOT AT THE BEGINNING OF THE FILENAME!
+    SOME SYSTEMS (e.g. MAC) AUTOMATICALLY HIDE SUCH FILES!
+
+The needed loaders and installation instruction for the Ioncube Loader are available at:
+
+    http://www.ioncube.com/loaders.php
+
+We reccomend to use the "Loader Wizard" for installation (see instructions on the top of the page).
+
+After the installation of the Ioncube Loader, place the license file into the root folder
+"library/SetaPDF/" or an upper folder and follow the default installation instructions.

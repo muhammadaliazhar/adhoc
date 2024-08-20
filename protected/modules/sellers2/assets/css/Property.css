@@ -1,0 +1,336 @@
+/***********************************************************************************
+* Copyright (C) 2011-2019 X2 Engine Inc. All Rights Reserved.
+*
+* X2 Engine Inc.
+* P.O. Box 610121
+* Redwood City, California 94061 USA
+* Company website: http://www.x2engine.com
+*
+* X2 Engine Inc. grants you a perpetual, non-exclusive, non-transferable license
+* to install and use this Software for your internal business purposes only
+* for the number of users purchased by you. Your use of this Software for
+* additional users is not covered by this license and requires a separate
+* license purchase for such users. You shall not distribute, license, or
+* sublicense the Software. Title, ownership, and all intellectual property
+* rights in the Software belong exclusively to X2 Engine. You agree not to file
+* any patent applications covering, relating to, or depicting this Software
+* or modifications thereto, and you agree to assign any patentable inventions
+* resulting from your use of this Software to X2 Engine.
+*
+* THIS SOFTWARE IS PROVIDED "AS IS" AND WITHOUT WARRANTIES OF ANY KIND, EITHER
+* EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE IMPLIED WARRANTIES OF
+* MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT.
+***********************************************************************************/
+
+/**
+ * @author Justin Toyomitsu <justin@x2engine.com>
+ */
+
+@font-face {
+    font-family: "Open Sans";
+    src: url("https://sydney.tworld.com/fonts/OpenSans-VariableFont_wdth-wght.ttf");
+}
+
+body {
+    font: normal 10pt "Open Sans" !important;
+}
+
+.property {
+    padding: 10px;
+    background-color:white;
+}
+
+.property_menu {
+    margin-top: 80px;
+}
+
+.property_menu_item {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    height: 30px;
+}
+
+.property_title {
+    font-size: 17pt;
+    font-weight: 600;
+    align-self: center;
+    letter-spacing: .025rem;
+}
+
+.property_filter {
+    display:inline-block;
+    float:left;
+    width: 25%;
+    padding-right: 8px;
+}
+
+.property-image {
+    height: 95%;
+    width: 60%;
+    float:right;
+    margin: 5px 30px 0px 0px;
+    border-radius:5px;
+}
+
+.filter_label {
+    margin-right:0.4em;
+    align-self: center;
+    font-size: .6rem;
+    font-weight: 700;
+    letter-spacing: .025rem;
+}
+
+.sort_label {
+    margin-right:0.4em;
+    align-self: center;
+    font-size: .6rem;
+    font-weight: 700;
+    letter-spacing: .025rem;
+}
+
+.property_sort {
+    display:inline-block;
+    float:left;
+    width: 25%;
+    padding-right: 8px;
+}
+
+.property_search {
+    display:inline-block;
+    float:right;
+    height:100% !important;
+}
+
+.property_create {
+    height: 30px;
+    border-radius: 5px;
+    background-color: #4bb4d6;
+    color: white;
+    font-size: 9pt;
+}
+
+.property-share {
+    width:70%;
+    padding: 0 !important;
+    display:block;
+    color:white;
+    background-color: #4bb4d6;
+    border-radius:3px;
+    margin-bottom: 5px;
+    margin-top: 35px;
+    height:27px;
+}
+
+.property-list {
+    width:90%;
+    color:#4bb4d6;
+    background-color:white;
+    border-radius:3px;
+    height:27px;
+}
+
+.property_create_row {
+    height: 40px; 
+    padding-bottom: 5px;
+}
+
+.property_row {
+    cursor: pointer;
+    background-color: white !important;
+}
+
+.property_filter #filter_dropdown {
+    height: 30px;
+    width: 50%;
+    border-radius: 5px;
+}
+
+.property_sort #sort_dropdown {
+    height: 30px;
+    width: 50%;
+    border-radius: 5px;
+}
+
+.property_search #property_search_box {
+    border-style: solid;
+    border-radius: 3px;
+    border-width: 1px;
+}
+
+.property_street {
+    font-size:16pt;
+    letter-spacing: .025rem;
+    font-weight:600;
+    margin-top:10px;
+    margin-bottom:5px;
+}
+
+.property_location {
+    font-size:11pt;
+    letter-spacing: .025rem;
+    margin-top:5px;
+    margin-bottom:5px;
+}
+
+#properties-grid table {
+    border-collapse: separate;
+    border-spacing: 10px;
+}
+
+#properties-grid table tbody td {
+    border:.05rem solid #e7e9ed !important;
+    border-radius:3px;
+    padding: 5px;
+}
+
+#properties-grid table tbody td .cell1 {
+    width: 20%;
+    height:100%;
+    float:left;
+    display:inline-block;
+}
+
+#properties-grid table tbody td .cell2 {
+    /* width: 30%; */
+    height:100%;
+    /* float:left; */
+    display:inline-block;
+}
+
+#properties-grid table tbody td .cell2 .listing_team {
+    font-size:11pt;
+    letter-spacing: .025rem;
+    padding:10px 0px 20px 10px;
+}
+
+#properties-grid table tbody td .cell3 {
+    width: 30%;
+    height:100%;
+    float:left;
+    display:inline-block;
+}
+
+#properties-grid table tbody td .cell3 .property-listed-by {
+    font-size:10pt;
+    padding:10px 0px 20px 5px;
+    letter-spacing: .025rem;
+}
+
+#properties-grid table tbody td .cell3 .property-lister {
+    margin-top:10px;
+    margin-bottom:5px;
+}
+
+.property-lister .lister-image {
+    display:inline-block;
+    float:left;
+    border-radius:40px;
+}
+
+.property-lister .lister-info {
+    display:inline-block;
+    float:left;
+    margin-left:20px;
+}
+
+.property-lister .lister-name {
+    font-size:11pt;
+    letter-spacing: .025rem;
+    font-weight: 600;
+    margin: 5px 0px 5px 0px;
+}
+
+.property-lister .lister-phone {
+
+}
+
+#properties-grid table tbody td .cell4 {
+    width: 20%;
+    height:100%;
+    float:left;
+    display:inline-block;
+}
+
+#properties-grid table tbody tr:hover {
+    background-color: #eff3f5;
+}
+
+.agent-tile {
+    align-content: space-between;
+    align-items: flex-start;
+    display: flex;
+    padding: 0.2rem;
+    margin: 0 auto;
+    line-height: 1.5;
+}
+
+.form-input {
+    border: .05rem solid #caced7;
+    border-radius: .2rem;
+    background: white;
+    width: 100%;
+}
+
+#agent1DropdownMenu:hover {
+    cursor: pointer;
+}
+
+.column {
+    flex: 1;
+    max-width: 100%;
+    padding-left: .4rem;
+    padding-right: .4rem;
+}
+
+.columns {
+    display: flex;
+    display: -ms-flexbox;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    margin-left: -.4rem;
+    margin-right: -.4rem;
+}
+
+.bordered {
+    border: .05rem solid #e7e9ed;
+    border-radius: .2rem;
+}
+
+.tile-icon {
+    flex: 0 0 auto;
+}
+
+.tile-content {
+    flex: 1 1 auto;
+}
+
+.text-lg {
+    font-size: 1.2em;
+}
+
+.text-bold {
+    font-weight: 700;
+}
+
+.text-ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.btn-view {
+    color: #5c9ad0!important;
+    border-color: #5c9ad0!important;
+    width: 70px;
+    height: 30px;
+    display: flex!important;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0.50rem!important;
+}
+
+.btn-view a {
+    font-size: x-small;
+    color: #5c9ad0;
+    font-weight: bold;
+}

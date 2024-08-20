@@ -1,0 +1,9 @@
+{
+    "name": "Crop Page",
+    "teaserText": "Resize page boundaries to simulate a cropping process.",
+    "requires": [
+        "SetaPDF-Core"
+    ],
+    "faIcon": "&#xf125;",
+    "previewFiles": ["/assets/pdfs/misc/4-rects.pdf"]
+}

@@ -1,0 +1,406 @@
+<?php
+/***********************************************************************************
+* Copyright (C) 2011-2019 X2 Engine Inc. All Rights Reserved.
+*
+* X2 Engine Inc.
+* P.O. Box 610121
+* Redwood City, California 94061 USA
+* Company website: http://www.x2engine.com
+*
+* X2 Engine Inc. grants you a perpetual, non-exclusive, non-transferable license
+* to install and use this Software for your internal business purposes only
+* for the number of users purchased by you. Your use of this Software for
+* additional users is not covered by this license and requires a separate
+* license purchase for such users. You shall not distribute, license, or
+* sublicense the Software. Title, ownership, and all intellectual property
+* rights in the Software belong exclusively to X2 Engine. You agree not to file
+* any patent applications covering, relating to, or depicting this Software
+* or modifications thereto, and you agree to assign any patentable inventions
+* resulting from your use of this Software to X2 Engine.
+*
+* THIS SOFTWARE IS PROVIDED "AS IS" AND WITHOUT WARRANTIES OF ANY KIND, EITHER
+* EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE IMPLIED WARRANTIES OF
+* MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT.
+***********************************************************************************/
+
+/**
+ * @author Clifton Chiang <clifton@x2engine.com>
+ */
+Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl() . '/js/pdfReader/build/pdf.js');
+
+$title = Yii::t('docs', 'Edit: ');
+$authParams = array('X2Model' => $model);
+
+$form = $this->beginWidget('CActiveForm', array(
+	'id' => 'x2sign-form',
+	'enableAjaxValidation' => false,
+));
+
+Yii::app()->clientScript->registerScriptFile($this->module->assetsUrl.'/js/signable.js', CClientScript::POS_END);
+Yii::app()->clientScript->registerScript('updateSignable', "
+    /* if (x2.x2sign == undefined)
+        x2.x2sign = {};
+
+    x2.x2sign.vars = {
+        'modelId': ".$model->id.",
+        'signDocId': ".$signDoc->id.",
+        'mediaId': ".$signDoc->mediaId.",
+        'pdfName': '".$pdfName."',
+        'fieldInfo': ".$signDoc->fieldInfo."
+    }; */
+
+    updateSignable($model->id, $signDoc->id, $signDoc->mediaId, '$pdfName', $signDoc->fieldInfo);
+", CClientScript::POS_END);
+
+Yii::app()->clientScript->registerCss('createX2Sign', '
+    .column {
+        float: left;
+        margin: unset;
+    }
+
+    #document {
+        background-color: #e4e4e4;
+        border: 1px solid black;
+        border-radius: 5px;
+        width: 850px;
+    }
+
+    hr {
+        background-color: #555555;
+        margin: 1px;
+    }
+
+    .x2-sign-doc {
+        width: 816px; 
+        height: 1056px;
+        display: inline-block; 
+        margin: auto;
+        z-index: 1;
+        position: absolute;
+        left: 15px;
+    }
+
+    #pdf-dropzone {
+        z-index: 2;
+        width: 816px;
+        height: 1056px;
+        position: absolute;
+        left: 15px;
+    }
+
+    .x2-sign-template {
+        position: relative;
+        height: 1070px;
+    }
+
+    .delete-field {
+        float: right;
+        position: relative;
+        left: 19px;
+        top: -4px;
+    }
+    
+    div[id^="Signature"] {
+        align-items: center;
+        justify-content: center;
+    }
+
+    div[id^="Signature"] > .delete-field {
+        left: 23px;
+        top: -9px;
+    }
+    
+    div[id^="Signature"] > i {
+        margin-left: -20%;
+        margin-top: -15%;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+    }
+
+    .delete-field:hover {
+        transform: scale(1.2);
+    }
+
+    .draggable > a.delete-field > i {
+        color: red;
+    }
+
+    .draggable {
+        z-index: 3;
+        top: 6px;
+        // background-color: rgba(3, 207, 252, 0.5);
+    }
+
+    input.x2-sign-input:not([id=initials]) {
+        min-width: 95px !important;
+        width: 95px;
+        position: relative;
+        top: -11px;
+        left: 5px;
+        text-align: left;
+        font-family: monospace !important;
+        font-size: 12px !important;
+        letter-spacing: 0.14px;
+        margin: unset !important;
+    }
+
+    input#checkbox {
+        position: absolute;
+        top: 9px;
+        left: 6px;
+        margin: unset;
+    }
+
+    input#initials {
+        min-width: 60px !important;
+        width: 60px;
+        position: relative;
+        top: -11px;
+        left: 5px;
+        text-align: left;
+        font-family: monospace;
+        font-size: 12px;
+        letter-spacing: 0.14px;
+        margin: unset;
+    }
+
+    #main-column {
+        width: 90%;
+        margin: auto;
+    }
+
+    .assign-field-name {
+        display: block;
+        text-align: center;
+        margin-top: 9px;
+        margin-bottom: 3px;
+    }
+
+    #recipient-selection-field {
+        display: block;
+        text-align: center;
+        margin-top: 9px;
+        margin-bottom: 3px;
+    }
+
+    .checkbox {
+        display: block;
+        text-align: center;
+        margin-top: 9px;
+        margin-bottom: 3px;
+    }
+
+    .color-preview {
+        height: 15px;
+        width: 15px;
+        background-color: rgba(3, 207, 252, 0.5);
+        border-radius: 50%;
+        display: inline-block;
+        border: 0.5px solid black;
+        position: relative;
+        top: 3px;
+    }
+
+    div[id*="Signature"] > .ui-resizable-handle {
+        height: 15px;
+        width: 15px;
+        background-color: #bbbbbb;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    div[id*="Signature"] > .ui-resizable-se {
+        background-image: url("");
+        right: -5px;
+        bottom: -5px;
+    }
+
+    div[id*="Signature"] > .ui-resizable-se, .ui-resizable-nw {
+        cursor: nwse-resize;
+    }
+
+    div[id*="Signature"] > .ui-resizable-ne, .ui-resizable-sw {
+        cursor: nesw-resize;
+    }
+
+    #add-field-button {
+        color: #01b701;
+        cursor: pointer;
+    }
+
+    #is-required, #read-only {
+        position: relative;
+        top: 3px;
+        left: 10px;
+        height: 10px;
+        width: 10px;
+    }
+');
+?>
+
+<div class="row form no-border">
+	<div class="col-2">
+		<div class="cell">
+            <?php
+                echo $form->errorSummary($model); 
+                echo $form->label($model,'name'); 
+                echo $form->textField(
+                    $model,'name',
+                    array('maxlength'=>100,'id'=>'doc-name')); 
+                echo $form->error($model,'name'); 
+            ?>
+		</div>
+        <div class="cell">
+            <?php
+                echo $form->label($model, 'document');
+                echo "<div id='media-autocomplete-container'>"; 
+                echo X2Model::renderModelAutocomplete (
+                    'Media', false, array (
+                        'name' => 'Media[name]'
+                    )
+                );
+                echo CHtml::hiddenField ('MediaModelId');
+                echo "</div>";
+            ?>	
+        </div>
+        <div class="add-fields" style="display: none;">
+            <div class="cell" style="margin-right: 20px;">
+                <?php
+                    echo CHtml::label('Field', '#choose-field') . CHtml::dropDownList('choose-field', 0, array(
+                        0 => 'Signature',
+                        1 => 'Initials',
+                        2 => 'Formula',
+                        3 => 'Checkbox',
+                        4 => 'Text',
+                        5 => 'Name',
+                        6 => 'Email',
+                        7 => 'Title',
+                        8 => 'Stamp',
+                    ));
+                ?>
+                <a id="add-field-button" onclick="createDraggable($('#choose-field option:selected').text());"><i class="fas fa-plus fa-lg"></i></a>
+            </div>
+            <div class="cell" style="margin-right: 20px;">
+                <?php
+                    $colors = array(
+                        'rgba(3, 207, 252, 0.5)',
+                        'rgba(252, 207, 3, 0.5)',
+                        'rgba(98, 209, 0, 0.5)',
+                        'rgba(255, 17, 0, 0.5)',
+                        'rgba(0, 218, 196, 0.5)',
+                        'rgba(255, 0, 221, 0.5)',
+                        'rgba(0, 140, 255, 0.5)',
+                        'rgba(132, 0, 255, 0.5)',
+                        'rgba(255, 140, 0, 0.5)',
+                        'rgba(173, 173, 173, 0.5)',
+                    );
+
+                    $recList = array();
+                    $options['options'] = array();
+                    $recip = 0;
+                    foreach($contacts as $name => $email) {
+                        $recList[$colors[$recip]] = $name;
+                        $options['options'][$colors[$recip]] = array('data-recip' => $recip+1);
+                        $recip += 1;
+                    }
+
+                    echo CHtml::label('Recipient', '#choose-recipient') . CHtml::dropDownList('choose-recipient', 0, $recList, $options);
+                ?>
+                <span class="color-preview"></span>
+            </div>
+        </div>
+        <div class="field-options" style="display: none;">
+            <div class="cell" style="margin-right: 5px;">
+                <?php
+                    echo CHtml::label('Required', '#is-required') . CHtml::checkbox('is-required', false);
+                ?>
+            </div>
+            <div class="cell">
+                <?php
+                    echo CHtml::label('Read-only', '#read-only') .  CHtml::checkbox('read-only', false);
+                ?>
+            </div>
+        </div>
+	</div>
+    <div class="col-9" style="display: flex; flex-direction: row; justify-content: center;">
+        <div id="field-bank" class="column" style="display: none;">
+            <!-- Draggable Elements -->
+            <div id="Signature-draggable" class="draggable resizable" style="display:none;" page="">
+                <a class="delete-field" onclick="deleteDraggable(this.parentNode);" href="#"><i class="fas fa-times-circle fa-lg"></i></a>
+                <i class="fas fa-signature fa-2x"></i>
+            </div>
+            <div id="Initials-draggable" class="draggable" style="display:none;" page="">
+                <a class="delete-field" onclick="deleteDraggable(this.parentNode);" href="#"><i class="fas fa-times-circle fa-lg"></i></a>
+                <input id="initials" class="x2-sign-input" type="text" minlength="1" maxlength="8" size="5" placeholder="Initials"></input>
+            </div>
+            <div id="Formula-draggable" class="draggable" style="display:none;" page="">
+                <a class="delete-field" onclick="deleteDraggable(this.parentNode);" href="#"><i class="fas fa-times-circle fa-lg" style="color:red"></i></a>
+                <input id="formula" class="x2-sign-input" type="text" minlength="1" size="15" placeholder="Formula"></input>
+            </div>
+            <div id="Checkbox-draggable" class="draggable" style="display:none;" page="">
+                <a class="delete-field" onclick="deleteDraggable(this.parentNode);" href="#"><i class="fas fa-times-circle fa-lg"></i></a>
+                <input id="checkbox" class="x2-sign-input" type="checkbox"></input>
+            </div>
+            <div id="Text-draggable" class="draggable" style="display:none;" page="">
+                <a class="delete-field" onclick="deleteDraggable(this.parentNode);" href="#"><i class="fas fa-times-circle fa-lg"></i></a>
+                <!-- <textarea id="text" class="x2-sign-input" rows="1" style="resize:none;"></textarea> -->
+                <input id="text" class="x2-sign-input" type="text" size="15" placeholder="Text"></input>
+            </div>
+            <div id="Name-draggable" class="draggable" style="display:none;" page="">
+                <a class="delete-field" onclick="deleteDraggable(this.parentNode);" href="#"><i class="fas fa-times-circle fa-lg"></i></a>
+                <input id="name" class="x2-sign-input" type="text" minlength="1" size="15" placeholder="Name"></input>
+            </div>
+            <div id="Email-draggable" class="draggable" style="display:none;" page="">
+                <a class="delete-field" onclick="deleteDraggable(this.parentNode);" href="#"><i class="fas fa-times-circle fa-lg"></i></a>
+                <input id="email" class="x2-sign-input" type="email" placeholder="Email"></input>
+                <div id="email-wrapper" class="input-wrapper">
+                </div>
+            </div>
+            <div id="Title-draggable" class="draggable" style="display:none;" page="">
+                <a class="delete-field" onclick="deleteDraggable(this.parentNode);" href="#"><i class="fas fa-times-circle fa-lg"></i></a>
+                <input id="title" class="x2-sign-input" type="text" minlength="1" placeholder="Title"></input>
+                <div id="title-wrapper" class="input-wrapper">
+                </div>
+            </div>
+            <div id="Stamp-draggable" class="draggable" style="display:none;" page="">
+                <a class="delete-field" href="#"><i class="fas fa-times-circle fa-lg"></i></a>
+                <i class="fas fa-signature fa-2x"></i>
+                <span>+ Date</span>
+            </div>
+        </div>
+        
+        <div id="document" class="column">
+            <div class="row" style="justify-content: center;">
+                <div class="x2-button-group" style="text-align: center;">
+                    <span id="prev" class="x2-button page-prev">Previous</span>
+                    <span id="next" class="x2-button page-next">Next</span>
+                    &nbsp; &nbsp;
+                    <span>Page: <span id="page_num"></span> / <span id="page_count"></span></span>
+                </div>
+            </div>
+            <div class="row x2-sign-template">
+                <canvas id="pdf" class="x2-sign-doc"></canvas>
+                <div id="pdf-dropzone"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="cell right pb-4" id='create-button-container' style="float: right;">
+    <?php if (!$lastDoc): ?>
+    <div style="float: right">
+            <a href="<?php echo substr(Yii::app()->createAbsoluteUrl(''), 0, -9) . "index.php/x2sign/x2sign/quickSetupTemplate/id/" . $envelope->id . "/signDocNum/" . $signDocNum; ?>" class="btn btn-warning">NEXT</a>
+        </div>
+    <?php else: ?>
+        <div style="float: right">
+            <a href="<?php echo substr(Yii::app()->createAbsoluteUrl(''), 0, -9) . "index.php/x2sign/x2sign/quickSetupEmail/id/" . $envelope->id; ?>" class="btn btn-warning">NEXT</a>
+        </div>
+    <?php endif; ?>
+    <div style="float: right">
+        <a href="<?php echo substr(Yii::app()->createAbsoluteUrl(''), 0, -9) . "index.php/x2sign/cancelQuickSetupEnvelope/id/" . $envelope->id; ?>" class="btn btn-warning">CANCEL</a>
+    </div>
+</div>
+
+<?php
+    $this->endWidget();
+?>

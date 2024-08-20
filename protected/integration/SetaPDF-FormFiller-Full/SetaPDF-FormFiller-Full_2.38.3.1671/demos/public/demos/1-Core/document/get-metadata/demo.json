@@ -1,0 +1,9 @@
+{
+    "name": "Get Metadata",
+    "teaserText": "Read metadata from a PDF document with PHP.",
+    "requires": [
+        "SetaPDF-Core"
+    ],
+    "faIcon": "&#xf05a;",
+    "faIcon2": "&#xf2f5;"
+}

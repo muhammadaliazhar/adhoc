@@ -1,0 +1,23 @@
+/**********************************************************************************
+* Copyright (C) 2011-2019 X2 Engine Inc. All Rights Reserved.
+*
+* X2 Engine Inc.
+* P.O. Box 610121
+* Redwood City, California 94061 USA
+* Company website: http://www.x2engine.com
+*
+* X2 Engine Inc. grants you a perpetual, non-exclusive, non-transferable license
+* to install and use this Software for your internal business purposes only
+* for the number of users purchased by you. Your use of this Software for
+* additional users is not covered by this license and requires a separate
+* license purchase for such users. You shall not distribute, license, or
+* sublicense the Software. Title, ownership, and all intellectual property
+* rights in the Software belong exclusively to X2 Engine. You agree not to file
+* any patent applications covering, relating to, or depicting this Software
+* or modifications thereto, and you agree to assign any patentable inventions
+* resulting from your use of this Software to X2 Engine.
+*
+* THIS SOFTWARE IS PROVIDED "AS IS" AND WITHOUT WARRANTIES OF ANY KIND, EITHER
+* EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE IMPLIED WARRANTIES OF
+* MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT.
+***********************************************************************************/.pseudo-link{cursor:pointer;color:#004baf;transition:color .1s}.pseudo-link:hover{color:#006cfc}.opacity-hover{opacity:0.3}.opacity-hover:hover{opacity:1}.ui-widget-content .folder-selector-option-container a{color:#004baf}.ui-widget-content .folder-selector-option-container a:hover{color:#006cfb}#folder-selector-list-view{margin-top:8px}#folder-selector-list-view .summary{display:none}#folder-selector-list-view .pager{border:none}#folder-selector-list-view .items{border-radius:0}#folder-selector-list-view .items .folder-selector-option-container{cursor:pointer;padding:5px 7px 5px 7px}#folder-selector-list-view .items .folder-selector-option-container.disabled-folder-option{color:#c5c5c5;background:#F9F9F9}#folder-selector-list-view .items .folder-selector-option-container.disabled-folder-option a{color:#c5c5c5 !important}#folder-selector-list-view .items .folder-selector-option-container:hover{background:#F9F9F9}#folder-selector-list-view .items .folder-selector-option-container .file-system-object-name{margin-left:5px}#folder-selector-list-view .items .folder-selector-option-container.selected{background:#b8ebb8}#x2-gridview-flashes-container{position:relative;right:4px}#folder-contents #create-folder-button .fa-inverse{color:white}#folder-contents .file-system-header{border-radius:0 !important}#folder-contents .page-title>.x2-button{height:24px}#folder-contents .items{border-radius:0;border:none}#folder-contents .items *{box-sizing:border-box}#folder-contents .items th{line-height:inherit;border-right:none;text-align:left;background:inherit;padding:11px 5px 11px 5px;border-bottom:1px solid #E9E9E9}#folder-contents .items th:first-child{text-align:center}#folder-contents .items tr{border-bottom-style:solid;border-bottom-width:1px;background-color:#FFF}#folder-contents .items tr.ui-draggable-dragging{z-index:1000 !important;border-radius:3px;-webkit-box-shadow:0px 2px 5px 2px rgba(0,0,0,0.4);-moz-box-shadow:0px 2px 5px 2px rgba(0,0,0,0.4);-ms-box-shadow:0px 2px 5px 2px rgba(0,0,0,0.4);-o-box-shadow:0px 2px 5px 2px rgba(0,0,0,0.4);box-shadow:0px 2px 5px 2px rgba(0,0,0,0.4);border-bottom:none;width:150px;overflow:hidden}#folder-contents .items tr.ui-draggable-dragging .file-system-object-owner,#folder-contents .items tr.ui-draggable-dragging .file-system-object-last-updated,#folder-contents .items tr.ui-draggable-dragging .file-system-object-visibility,#folder-contents .items tr.ui-draggable-dragging td:first-child{display:none}#folder-contents .items tr.moving-file td{background:#F9F9F9;color:#c5c5c5}#folder-contents .items tr.moving-file td a{color:#c5c5c5}#folder-contents .items tr td{padding:11px 5px 11px 5px;border-right:none;border-bottom:1px solid #E9E9E9}#folder-contents .items tr .file-system-object-name{margin-left:5px}#folder-contents .items tr .file-system-object-link{float:left;width:30%}#folder-contents .items tr .file-system-object-attributes{float:right;width:70%;text-align:center}#folder-contents .items tr .file-system-object-owner{float:left;width:30%}#folder-contents .items tr .file-system-object-last-updated{float:left;width:45%}#folder-contents .items tr .file-system-object-visibility{float:left;width:15%}#folder-contents .pager{border:none}#attachments-grid{margin-top:17px}.file-system-header{padding:10px;font-weight:bold}#folder-contents .items{border-bottom:0px}.file-system-clear-fix:after{content:' ';display:block;height:0;clear:both}

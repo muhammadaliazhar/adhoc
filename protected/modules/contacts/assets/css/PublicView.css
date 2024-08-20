@@ -1,0 +1,218 @@
+/***********************************************************************************
+* Copyright (C) 2011-2019 X2 Engine Inc. All Rights Reserved.
+*
+* X2 Engine Inc.
+* P.O. Box 610121
+* Redwood City, California 94061 USA
+* Company website: http://www.x2engine.com
+*
+* X2 Engine Inc. grants you a perpetual, non-exclusive, non-transferable license
+* to install and use this Software for your internal business purposes only
+* for the number of users purchased by you. Your use of this Software for
+* additional users is not covered by this license and requires a separate
+* license purchase for such users. You shall not distribute, license, or
+* sublicense the Software. Title, ownership, and all intellectual property
+* rights in the Software belong exclusively to X2 Engine. You agree not to file
+* any patent applications covering, relating to, or depicting this Software
+* or modifications thereto, and you agree to assign any patentable inventions
+* resulting from your use of this Software to X2 Engine.
+*
+* THIS SOFTWARE IS PROVIDED "AS IS" AND WITHOUT WARRANTIES OF ANY KIND, EITHER
+* EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE IMPLIED WARRANTIES OF
+* MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT.
+***********************************************************************************/
+
+/**
+ * @author Justin Toyomitsu <justin@x2engine.com>
+ */
+
+:root {
+    --light-color: #1c7fce;
+}
+
+body * {
+    font-family:  -apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+}
+
+.blue {
+    color:white;
+    background-color: var(--light-color);
+    border-radius:3px;
+}
+
+.white {
+    color: var(--light-color);
+    background-color:white;
+    border-radius:3px;
+}
+
+.prop-button {
+    font-size:8pt;
+    height:25px;
+    width:80px;
+    margin-right:3px;
+}
+
+.preview-header {
+    width:75%;
+    height:450px;
+    background-color:#8b898b;
+    //background-blend-mode: soft-light;
+}
+
+.header-info {
+    left: 8em !important;
+}
+
+.property-street {
+    font-size:18pt;
+    font-weight:100;
+    color:white;
+    padding-bottom:15px;
+}
+
+.property-zip {
+    font-size:13pt;
+    color:white;
+    padding-bottom:10px;
+}
+
+.property-inner {
+    font-size:13pt;
+    color:white;
+    padding-bottom:10px;
+}
+
+.property-more  a {
+    font-size:8pt;
+    color:white;
+    text-decoration: none;
+}
+
+.header-buttons {
+    display:inline-block;
+    float:right;
+    height:100px;
+    width:350px;
+    padding: 330px 10px 10px 20px;
+}
+
+.property-share {
+    padding-bottom:5px;
+}
+
+.property-edit-list {
+    padding-bottom:5px;
+}
+
+.property-edit {
+    display:inline-block;
+    padding-right:10px;
+    color:#4bb4d6;
+}
+
+.property-list {
+    display:inline-block;
+    float:right;
+    color:#4bb4d6;
+}
+
+.property-share-button {
+    width:100%;
+    height:35px;
+}
+
+.property-edit-button {
+    font-size:9pt;
+    height:30px;
+    width:170px;
+}
+
+.property-list-button {
+    font-size:9pt;
+    height:30px;
+    width:170px;
+}
+
+.preview-document {
+    background-color:white;
+    padding-top: 5px;
+}
+
+.preview-document-header {
+
+}
+
+.preview-buttons {
+    height:30px;
+    width: 70%;
+    display:inline-block;
+}
+
+.preview-notify {
+    height:30px;
+    width: 28%;
+    display:inline-block;
+    float:right;
+    padding: 5px 0px 0px 5px;
+}
+
+.notify-button {
+    color: var(--light-color);
+    height:100%;
+    text-align:right; 
+    border:none;
+    float:right;
+}
+
+.preview-form {
+    background-color: white;
+    color: #7c7e7f;
+    letter-spacing: .05rem;
+}
+
+.notify-circle {
+    color:white;
+    border-radius: 50%;
+    behavior: url(PIE.htc);
+    width:15px;
+    height:15px;
+    background:orange;
+    text-align:center;
+    display:inline-block;
+    margin-left: 5px;
+}
+
+.preview-upload {
+    width:100%; 
+}
+
+.share-body {
+    padding: 10px 0px 10px 0px;     
+}
+
+.share-label {
+    color: var(--light-color); 
+}
+
+.share-input {
+    width: 350px;
+}
+
+.property-menu {
+    height: 700px;
+    padding: 0px 5px 0px 0px;
+}
+
+.preview-documents {
+    width:100%;
+}
+
+#moreInfoLink {
+    color: white;
+    text-decoration: none;
+}
+
+#moreInfoLink:hover {
+    text-decoration: none;
+}

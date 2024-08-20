@@ -1,0 +1,288 @@
+<?php
+/***********************************************************************************
+* Copyright (C) 2011-2019 X2 Engine Inc. All Rights Reserved.
+*
+* X2 Engine Inc.
+* P.O. Box 610121
+* Redwood City, California 94061 USA
+* Company website: http://www.x2engine.com
+*
+* X2 Engine Inc. grants you a perpetual, non-exclusive, non-transferable license
+* to install and use this Software for your internal business purposes only
+* for the number of users purchased by you. Your use of this Software for
+* additional users is not covered by this license and requires a separate
+* license purchase for such users. You shall not distribute, license, or
+* sublicense the Software. Title, ownership, and all intellectual property
+* rights in the Software belong exclusively to X2 Engine. You agree not to file
+* any patent applications covering, relating to, or depicting this Software
+* or modifications thereto, and you agree to assign any patentable inventions
+* resulting from your use of this Software to X2 Engine.
+*
+* THIS SOFTWARE IS PROVIDED "AS IS" AND WITHOUT WARRANTIES OF ANY KIND, EITHER
+* EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE IMPLIED WARRANTIES OF
+* MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT.
+***********************************************************************************/
+
+/**
+ * @author Peter Czupil <peter@x2engine.com>
+ */
+
+// Import Bootstrap
+Yii::app()->clientScript->registerCssFile('https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css');
+Yii::app()->clientScript->registerScriptFile('https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js');
+Yii::app()->clientScript->registerScriptFile('https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js');
+Yii::app()->clientScript->registerPackage('ckeditor');
+Yii::app()->clientScript->registerScript('setupEmailForm', '
+    CKEDITOR.replace("emailMessage", {
+        bodyId: "emailMessage", 
+        height: 250,
+        width: 500, 
+        removePlugins: "toolbar, resize, elementspath",
+        fontSize_defaultLabel: "1rem",
+    });
+');
+
+$cs = Yii::app()->clientScript;
+$cs->registerCssFile(Yii::app()->theme->baseUrl.'/css/ui-elements.css');
+$cs->registerCssFile(Yii::app()->theme->baseUrl.'/css/fontAwesome/css/font-awesome.css');
+$cs->registerCssFile(Yii::app()->theme->baseUrl.'/css/fontAwesome/css/all.min.css');
+$cs->registerCssFile(Yii::app()->theme->baseUrl.'/css/fontAwesome/css/v4-shims.min.css');
+$cs->registerCssFile(Yii::app()->theme->baseUrl.'/css/form.css?' . Yii::app()->params->buildDate, 'screen, projection');
+
+Yii::app()->clientScript->registerScript('hideSidebarJS', "
+    $('#fullscreen-button').hide();
+    $('#sidebar-right').hide();
+");
+
+
+
+Yii::app()->clientScript->registerCssFile(Yii::app()->controller->module->assetsUrl.'/css/quicksend.css');
+Yii::app()->clientScript->registerScriptFile(Yii::app()->controller->module->assetsUrl.'/js/signable.js');
+Yii::app()->clientScript->registerScript('sendEnvelopeJS', "
+    // Inspiration taken from: https://stackoverflow.com/questions/3519861/yes-or-no-confirm-box-using-jquery
+    function confirmDialog(message) {
+        $('<div></div>').appendTo('body')
+            .html('<div><h6>' + message + '</h6></div>')
+            .dialog({
+                modal: true,
+                title: 'Delete message',
+                zIndex: 10000,
+                autoOpen: true,
+                width: 'auto',
+                resizable: false,
+                buttons: {
+                    Yes: function() {
+                        $('body').append('<h1>Confirm Dialog Result: <i>Yes</i></h1>');
+                        $(this).dialog('close');
+                        window.location.href = '" . Yii::app()->controller->createUrl('/x2sign/cancel2', array('id' => $envelope->id)) . "';
+                    },
+                    No: function() {
+                        $('body').append('<h1>Confirm Dialog Result: <i>No</i></h1>');
+                        $(this).dialog('close');
+                    }
+                },
+                close: function(event, ui) {
+                    $(this).remove();
+                }
+            });
+    };
+
+    $('#send-button').on('click', function() {
+        var throbber$ = auxlib.pageLoading ();
+        // Force CKEditor to update the textarea it replaces with the value
+        CKEDITOR.instances.emailMessage.updateElement();
+        $.ajax({
+           url: '" . Yii::app()->controller->createUrl('/x2sign/quickSendFinish', array('id' => $envelope->id)) . "', 
+           type: 'POST',
+           data: {
+               subject: $('#emailSubject').val(),
+               message: $('#emailMessage').val(),
+               delay: $('#hoursDelay').val(),
+               expireDate : $('#expireDate').val()
+           },
+           success: function (resp) {
+               alert('Success!');
+               let redirectUrl = '" . Yii::app()->controller->createUrl('/x2sign', array('id' => $envelope->id)) . "';
+               window.location.replace(redirectUrl);
+           },
+           error: function(resp) {
+                throbber$.remove();
+                console.log('error');
+                alert('Could not send email: ' + JSON.stringify(resp));
+           }
+        });
+    });
+
+    $('#template').change(function() {
+        $.ajax({
+        url: '".substr(Yii::app()->createAbsoluteUrl(''), 0, -9) . "index.php/docs/fullView/' + $('#template').val() + '?json=1&replace=1',
+        type: 'POST',
+        data: {
+            json: 1,
+            replace: 1
+        },
+        success: function (data) {
+            $('#emailMessage').html(data.body);
+            $('.cke_wysiwyg_frame').contents().find('#emailMessage').html(data.body);
+                $('#emailSubject').val(data.subject);
+
+        },
+        error: function() {
+            console.log('error');
+        }
+        });
+    });
+
+    $('#cancel-button').on('click', function() {
+        confirmDialog('Are you sure you want to cancel this envelope? All progress will be lost.');
+    });
+
+    $('#back-button').on('click', function() {
+        window.location.replace('" . Yii::app()->controller->createUrl('/x2sign/quickSetupTemplate', array('id' => $envelope->id)) . "');
+    });
+
+    $('#preview-docs').on('click', function() {
+        window.open('" . Yii::app()->createUrl('x2sign/x2sign/previewDocs', array('envelopeId' => $envelope->id)) . "', '_blank');
+    });
+
+    $('#edit-document-order').on('click', function() {
+        window.location.href = '" . Yii::app()->controller->createUrl('/x2sign/editDocs', array('id' => $envelope->id)) . "';
+    });
+
+    $('#add-document').on('click', function() {
+        window.location.href = '" . Yii::app()->controller->createUrl('/x2sign/addDocs', array('id' => $envelope->id)) . "';
+    });
+
+     // This uses the same confirm dialog as the 'void envelope' button,
+    // however that is hard-coded for the void message and didn't worry
+    // about changing it to be general. TO-DO in the future to simplify
+    // this code. (Clifton clifton@x2engine.com)
+    $('#finish-later').on('click', function() {
+        $('<div></div>').appendTo('body')
+            .html('<div><h6>Finish this envelope later? Progress will be saved.</h6></div>')
+            .dialog({
+                modal: true,
+                title: 'Save',
+                zIndex: 10000,
+                autoOpen: true,
+                width: 'auto',
+                resizable: false,
+                buttons: {
+                    Yes: function() {
+                        $('body').append('<h1>Confirm Dialog Result: <i>Yes</i></h1>');
+                        $(this).dialog('close');
+
+                        $.ajax({
+                            url: '" . Yii::app()->controller->createUrl('/x2sign/finishLater', array('id' => $envelope->id)) . "',
+                            type: 'POST',
+                            success: function() {
+                                window.location.href = '" . Yii::app()->controller->createUrl('/x2sign/index') . "';
+                            }
+                        });
+                    },
+                    No: function() {
+                        $('body').append('<h1>Confirm Dialog Result: <i>No</i></h1>');
+                        $(this).dialog('close');
+                    }
+                },
+                close: function(event, ui) {
+                    $(this).remove();
+                }
+        });
+    });
+");
+
+Yii::app()->clientScript->registerCss('emailStyling', '
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    //input[type=number] {
+    //    -moz-appearance: textfield;
+    //}
+
+    #expiration-days {
+        width: 52px;
+        height: 30px;
+    }
+');
+
+$profile = Profile::model()->findByAttributes(array('username' => User::getMe()->username));
+?>
+
+<div class="container">
+    <div class="">
+        <div class="pt-2">
+            <h3>REVIEW AND SEND</h3>
+        <div class="dropdown cell right pb-4" style="float: right; margin-top: 10px; margin-right: 10px;">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Envelope Actions
+                </button>
+                <div class="dropdown-menu">
+                    <button id="finish-later" class="dropdown-item">Finish Later</button>
+                    <button id="add-document" class="dropdown-item">Add Document</button>
+                    <button id="edit-document-order" class="dropdown-item">Edit Document Order</button>
+                    <button id="preview-docs" class="dropdown-item">Preview Documents</button>
+                    <button id="cancel-button" class="dropdown-item">Void Envelope</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+       <b>Document(s): </b><span>
+        <?php 
+            for($i = 0; $i < count($signDocNames); $i++) {
+                echo $signDocNames[$i];
+                if($i < count($signDocNames) - 1) 
+                    echo ", "; 
+            }
+        ?></span>
+    </div>
+    <div>
+        <b>Recipient(s): </b><span>
+        <?php
+            for($i = 0; $i < count($recipients); $i++) {
+                echo $recipients[$i];
+                if($i < count($recipients) - 1) 
+                    echo ", "; 
+            }
+        ?></span> 
+    </div>
+    <div class="">
+        <div class="pt-2">
+            <h3>Email</h3>
+        </div>
+        <div class="row">
+            <form id="emailForm">
+                <div class="form-group">
+                    <?php echo CHtml::label(Yii::t('marketing','Delay Send by Hours: (Optional)'), ''); ?>
+                    <input type="number" id="hoursDelay" name="hoursDelay" min="0"  class='hoursDelay'>
+                </div>
+                <div class="form-group">
+                <?php echo CHtml::label(Yii::t('marketing','Expiration Date (optional)'), ''); ?>
+                <?php echo X2Html::activeDatePicker (new X2SignEnvelopes, 'expireDate', array ('id' => 'expireDate', 'name' => 'expireDate', 'style'=>'background: white !important;'  ), 'datetime'); ?>
+                </div>
+                <div class="form-group">
+                    <label>Subject</label>
+                    <input id="emailSubject" class="form-control" name="emailSubject" style="width: 500px;"></input>
+                </div>
+                <div class="form-group">
+                    <?php echo CHtml::label(Yii::t('marketing','Template'), ''); ?>
+                    <?php echo CHtml::dropDownList('template', '', $template, array('style'=>'width: 100px;')); ?>
+                </div>
+                <div class="form-group">
+                    <label>Email Message</label>
+                    <textarea id="emailMessage" class="form-control" style="overflow:auto !important; height: 250px !important; resize: none;" name="emailMessage"><?php if (User::getMe()->id != 4427) echo $profile->signature ?></textarea>
+                    <!-- <div contenteditable id="emailMessage" class="form-control" style="overflow:hidden !important; height:100% !important;" name="emailMessage" style="width: 500px; hight: 500px;"></div> -->
+                </div>
+            </form>
+        </div>
+    </div>
+    <div style="float: right; padding: 5px;">
+        <button id="back-button" class="btn btn-light flex-item" style="border: 1px solid #8e9296;">Back</button>
+        <button id="send-button" class="btn btn-warning flex-item">Send</button>
+    </div> 
+</div>
+

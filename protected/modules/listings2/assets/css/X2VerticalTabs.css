@@ -1,0 +1,139 @@
+/***********************************************************************************
+* Copyright (C) 2011-2019 X2 Engine Inc. All Rights Reserved.
+*
+* X2 Engine Inc.
+* P.O. Box 610121
+* Redwood City, California 94061 USA
+* Company website: http://www.x2engine.com
+*
+* X2 Engine Inc. grants you a perpetual, non-exclusive, non-transferable license
+* to install and use this Software for your internal business purposes only
+* for the number of users purchased by you. Your use of this Software for
+* additional users is not covered by this license and requires a separate
+* license purchase for such users. You shall not distribute, license, or
+* sublicense the Software. Title, ownership, and all intellectual property
+* rights in the Software belong exclusively to X2 Engine. You agree not to file
+* any patent applications covering, relating to, or depicting this Software
+* or modifications thereto, and you agree to assign any patentable inventions
+* resulting from your use of this Software to X2 Engine.
+*
+* THIS SOFTWARE IS PROVIDED "AS IS" AND WITHOUT WARRANTIES OF ANY KIND, EITHER
+* EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE IMPLIED WARRANTIES OF
+* MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT.
+***********************************************************************************/
+
+.x2-vertical-tabs {
+    width: 20%;
+    height: 100%;
+    float: left;
+    background-color: #f1f1f1;
+    border: 1px solid #ccc;
+}
+
+.tabcontent {
+    float:left;
+    height:100%;
+    width:95%;
+    padding-left: 2.5%;
+    padding-right: 2.5%;
+    margin-bottom: 200px;
+    /*padding: 1em 0px 0px 10px;*/
+}
+
+.x2-vertical-tabs .tablinks {
+    width:100%;
+    border:none;
+    outline:none;
+    transition:0.3s;
+    font-size:9pt;
+    color: #ccc;
+    -webkit-text-stroke-color: #ccc;
+    display:block;
+    background-color:inherit;
+    text-align:center;
+    height:100px; 
+}
+
+.x2-vertical-tabs .tablinks:hover {
+    color: #1c7fce;
+    -webkit-text-stroke-color: #1c7fce;
+    border-bottom: 3px solid #1c7fce;
+}
+
+.x2-vertical-tabs .tablinks.active {
+    color: #007ba3;
+    -webkit-text-stroke-color: #007ba3;
+    /*border-right: 3px solid #007ba3;
+    border-top: 2px solid #77c9e5;
+    border-bottom: 2px solid #77c9e5;*/
+}
+
+.x2-vertical-tabs .tablinks .property-icons {
+    margin-bottom: 10px;
+    font-size: 24pt;
+    color: transparent;
+    -webkit-text-stroke-width: 1.5px;
+}
+
+.x2-vertical-tabs {
+    width: 20%;
+    height: 100%;
+    float: left;
+    background-color: #f1f1f1;
+    border: 1px solid #ccc;
+}
+
+.tabcontent {
+    float:left;
+    height:100%;
+    width:100%;
+    /*padding: 1em 0px 0px 10px;*/
+}
+
+.x2-horizontal-tabs .tablinks {
+    width:95%;
+    padding-left: 2.5%;
+    padding-right: 2.5%;
+    border:none;
+    outline:none;
+    transition:0.3s;
+    font-size:9pt;
+    color: #ccc;
+    -webkit-text-stroke-color: #ccc;
+    display:block;
+    background-color:inherit;
+    text-align:center;
+    height:100px;
+}
+
+.x2-horizontal-tabs .tablinks:hover {
+    color: #1c7fce;
+    -webkit-text-stroke-color: #1c7fce;
+    border-right: 3px solid #1c7fce;
+}
+
+.x2-horizontal-tabs .tablinks.active {
+    color: #007ba3;
+    -webkit-text-stroke-color: #007ba3;
+    /*border-right: 3px solid #007ba3;
+    border-top: 2px solid #77c9e5;
+    border-bottom: 2px solid #77c9e5;*/
+}
+
+.x2-horizontal-tabs .tablinks .property-icons {
+    margin-bottom: 10px;
+    font-size: 24pt;
+    color: transparent;
+    -webkit-text-stroke-width: 1.5px;
+}
+
+.x2-horizontal-tabs {
+    width: 20%;
+    height: 100%;
+    float: left;
+    background-color: #f1f1f1;
+    border: 1px solid #ccc;
+}
+
+
+
